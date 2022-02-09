@@ -143,7 +143,9 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						$productVolMngm = empty($productVolMngm) ? "no" : $productVolMngm;
 						/* write_log('Producto maneja peso volumétrico: '. $productVolMngm); */
 						if($productVolMngm == "no"){
-							$weight = $weight + $_product->get_weight() * $qty;
+                            $originalWeightByUnit = apply_filters('wc_vwds_weight_no_volumetric_by_unit',$_product->get_weight(),$_product);
+                            $originalWeightByPack = apply_filters('wc_vwds_weight_no_volumetric_by_pack',$originalWeightByUnit * $qty, $qty, $_product);
+							$weight += $originalWeightByPack;
 						} else {
 
 							$largo = (float)$_product->get_length();
@@ -180,6 +182,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					
                     $weight = wc_get_weight( $weight, 'kg' );
  					write_log('Peso acumulado hasta el momento: ' .$weight . ' kg.');
+                    
+                    $weight = apply_filters('wc_vwds_total_contents_weight_before_get_rule',$weight,$package['contents']);
 					
 					global $wpdb;
                     $locationTypeForCost = apply_filters('wc_vwds_location_type_for_cost','region');
