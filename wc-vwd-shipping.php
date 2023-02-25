@@ -443,16 +443,6 @@ function emp_set_state_list($vl){
 	return array('CL' => $vl);
 }
 
-//add_action('woocommerce_checkout_update_order_review','emp_set_shipping_state');
-function emp_set_shipping_state($data){
-	return;
-}
-
-//add_action('woocommerce_before_get_rates_for_package','emp_on_calculate_shipping_set_state_dest',10,2);
-function emp_on_calculate_shipping_set_state_dest($package, $shipping_method ){
-    $address_state_dest_code = explode('-',$package['destination']['state'])[1];
-    $package['destination']['state'] = $address_state_dest_code;
-}
 
 add_action( 'rest_api_init', 'set_endpoints');
 function set_endpoints(){
@@ -549,21 +539,6 @@ function emp_configure_checkout_city_field($ckfs){
     return $ckfs;
 }
 
-//add_action('woocommerce_checkout_process','emp_process_city_name',10,1);
-function emp_process_city_name(){
-	write_log('================= Post: ================');
-	write_log($_POST);
-    global $wpdb;
-	$bc_code = $_POST['billing_city'];
-    $loc_code = explode('-',$bc_code)[0];
-    $bs_zone  = explode('-',$bc_code)[1];
-    $qry = 'SELECT * FROM wp_wc_vwds_locations WHERE location_code = "'. $loc_code .'" AND base_zone = "'.$bs_zone.'" ORDER BY "desc"';
-    $location = $wpdb->get_results($qry, OBJECT);
-    $city_name = $location[0]->desc;
-	$_POST['billing_city'] = $_POST['shipping_city'] = $city_name;
-	
-}
-
 add_action('wp_enqueue_scripts','emp_enqueue_scripts_on_checkout',99);
 function emp_enqueue_scripts_on_checkout(){
     if(is_checkout()){
@@ -649,8 +624,4 @@ function emp_add_js_locations(){
     }
 }
 
-//add_filter('woocommerce_package_rates','emp_wvds_add_location_code_field_to_package');
-function emp_wvds_add_location_code_field_to_package($r){
-    return $r;
-}
 
