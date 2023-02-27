@@ -75,7 +75,7 @@ class JGBVWDS_Manager{
 		) );
 		// Load API
 
-        if( $this->dependenciesOk() ){
+        if( $this->CheckDependenciesOk() ){
 
             // Load php code
             $this->load_php_api();
@@ -188,11 +188,18 @@ class JGBVWDS_Manager{
     private function load_php_api(){
         //require_once $this->path( 'HELPERS_DIR', 'functions-vwds-helpers.php' );
         
-        require_once $this->path( 'CORE_DIR', 'class-vwds-shipping.php' );
-        require_once $this->path( 'CORE_DIR', 'class-vwds-products-flds.php' );
+        
+        require_once $this->path( 'CORE_DIR', 'class-vwds-product-flds.php' );
         require_once $this->path( 'CORE_DIR', 'class-vwds-checkout-flds.php' );
         require_once $this->path( 'CORE_DIR', 'class-vwds-rest-api.php' );
         require_once $this->path( 'CONFIG_DIR', 'class-db-config.php' );
+
+		/* la clase de wc_vwds_Shipping_Method hay que cargarla después
+		 * de que inicialice el sistema de envíos de WC. */
+		add_action( 'woocommerce_shipping_init', function(){
+			require_once $this->path( 'CORE_DIR', 'class-vwds-shipping.php' );
+		} );
+		
     }
 
     private function create_objects(){

@@ -53,6 +53,6 @@ class JGBVWDSDbInitializator{
     public static function poblateLocations($country='CL'){
       require_once __DIR__ . "/config_locations_$country.php";
       $locations_data = JGB_get_locations_data();
-
+      
     }
 }
