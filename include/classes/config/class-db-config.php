@@ -32,7 +32,7 @@ class JGBVWDSDbInitializator{
                     KEY `wp_wc_vwds_rules_zone_code_IDX` (`zone_code`) USING BTREE
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;";
 
-        $isql .= "CREATE TABLE `wp_wc_vwds_zones` (
+        $isql .= "CREATE TABLE IF NOT EXISTS `wp_wc_vwds_zones` (
                     `id` int unsigned NOT NULL AUTO_INCREMENT,
                     `code` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `desc` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
