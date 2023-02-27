@@ -142,7 +142,6 @@ class JGBVWDS_Manager{
                 'save_product_vol_weight_shipping_opts'
             )
         );
-
     }
 
     private function public_hooks(){
