@@ -7,6 +7,7 @@ class JGBVWDSDbInitializator{
     public static function initializeTables(){
         global $wpdb;
 
+        ob_start();
         $isql  = "CREATE TABLE IF NOT EXISTS `wp_wc_vwds_locations` (
                     `id` int unsigned NOT NULL AUTO_INCREMENT,
                     `location_code` varchar(24) NOT NULL,
@@ -18,8 +19,9 @@ class JGBVWDSDbInitializator{
                     KEY `wp_wc_vwds_locations_parent_IDX` (`parent`) USING BTREE,
                     KEY `wp_wc_vwds_locations_type_IDX` (`type`) USING BTREE
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;";
+        $wpdb->query( $isql );
 
-        $isql .= "CREATE TABLE IF NOT EXISTS `wp_wc_vwds_rules` (
+        $isql = " CREATE TABLE IF NOT EXISTS `wp_wc_vwds_rules` (
                     `id` int unsigned NOT NULL AUTO_INCREMENT,
                     `min_weight` float NOT NULL,
                     `max_weight` float NOT NULL,
@@ -31,23 +33,28 @@ class JGBVWDSDbInitializator{
                     KEY `wp_wc_vwds_rules_max_weight_IDX` (`max_weight`) USING BTREE,
                     KEY `wp_wc_vwds_rules_zone_code_IDX` (`zone_code`) USING BTREE
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;";
+        $wpdb->query( $isql );
 
-        $isql .= "CREATE TABLE IF NOT EXISTS `wp_wc_vwds_zones` (
+        $isql = " CREATE TABLE IF NOT EXISTS `wp_wc_vwds_zones` (
                     `id` int unsigned NOT NULL AUTO_INCREMENT,
                     `code` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `desc` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     UNIQUE KEY `wp_wc_vwds_zones_id_IDX` (`id`) USING BTREE,
                     UNIQUE KEY `wp_wc_vwds_zones_code_IDX` (`code`) USING BTREE
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+        $wpdb->query( $isql );
 
-        $isql .= "CREATE TABLE IF NOT EXISTS `wp_wc_vwds_zones_locations` (
+        $isql = " CREATE TABLE IF NOT EXISTS `wp_wc_vwds_zones_locations` (
                     `id` int unsigned NOT NULL AUTO_INCREMENT,
                     `zone_code` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     `location_code` varchar(24) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
                     UNIQUE KEY `wp_wc_vwds_zones_locations_id_IDX` (`id`) USING BTREE
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-
-
+        $wpdb->query( $isql );
+        
+        
+        write_log("Salida de inicialización de tablas de wp_wc_vwd_shipping...");
+        write_log( ob_get_clean() );
     }
 
     public static function poblateLocations($country='CL'){
