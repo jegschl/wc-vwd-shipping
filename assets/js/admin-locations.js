@@ -1,6 +1,8 @@
 (function( $ ) {
 	'use strict';
 
+    let dttbl = null;
+
     function actions_data_render(data, type){
 		if (type === 'display') {
 			var output = '';
@@ -44,12 +46,12 @@
 
     function onDttblDraw(){
         const itemActionReqSendDwldCodeSelector = '.action.send-dosf-download-code';
-        $(itemActionReqSendDwldCodeSelector).off('click');
-        $(itemActionReqSendDwldCodeSelector).on('click',dttblItemActionReqSendDownloadCodeEmail);
+        /* $(itemActionReqSendDwldCodeSelector).off('click');
+        $(itemActionReqSendDwldCodeSelector).on('click',dttblItemActionReqSendDownloadCodeEmail); */
     }
 
-    $(document).ready(function ($) {
-        //debugger;
+    $(document).ready(function () {
+        
         dttbl = $('#tabla').DataTable( {
             processing: true,
             serverSide: true,
@@ -84,4 +86,4 @@
 
     });
 
-});
+})(jQuery);

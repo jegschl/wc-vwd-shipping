@@ -149,6 +149,9 @@ class JGBVWDS_Manager{
         );
 
 		add_action( 'admin_menu', [$this->adminMan,'menu'] );
+
+		add_action( 'JGB/VWDS/sections_locations', [$this->adminMan,'locations_list_html_render']);
+		add_action('admin_enqueue_scripts',[$this->adminMan,'enqueue_js_locations']);
     }
 
     private function public_hooks(){
@@ -189,7 +192,7 @@ class JGBVWDS_Manager{
 
     private function api_hooks(){
         // Initialize the rest API.
-        add_action( 'rest_api_init', 'set_endpoints');
+        add_action( 'rest_api_init', [$this->restApi, 'set_endpoints']);
     }
 
     private function load_php_api(){
@@ -220,13 +223,12 @@ class JGBVWDS_Manager{
         $this->dbInitzr = new JGBVWDSDbInitializator;
 
 		$cfg = [
-			'assetsPath' 		=> '',
-			'assetsUrlPrfx' 	=> '',
-			'urlGetLocations'	=> rest_url( '/wc-vwd-sipping/locations/' )
+			'assetsPath'		=> $this->path('ASSETS_DIR'),
+			'assetsUrlPrfx'		=> JGB_VWDS_PLUGIN_URL . '/assets',
+			'restAPIer'			=> $this->restApi
 		];
 		
-
-		$this->adminMan = new JGBVWDSAdminManager;
+		$this->adminMan = new JGBVWDSAdminManager ($cfg);
     }
 
     /**

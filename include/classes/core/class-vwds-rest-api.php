@@ -8,7 +8,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 
 class JGBVWDSRestApi{
-    private function set_endpoints(){
+    public function set_endpoints(){
         register_rest_route(
             'wc-vwd-sipping/',
             '/comunas-por-region/(?P<region_id>\d+)',
@@ -28,15 +28,30 @@ class JGBVWDSRestApi{
 
         register_rest_route(
             'wc-vwd-sipping/',
-            '/locations',
+            '/locations/',
             array(
                 'methods'  => 'GET',
-                'callback' => 'sendLocations',
+                'callback' => [$this,'sendLocations'],
                 'permission_callback' => '__return_true',
             )
         );
 
 
+    }
+
+    public function get_endpoint_base($endpoint_name){
+        switch($endpoint_name){
+            case 'locations':
+                return rest_url('/wc-vwd-sipping/locations/');
+                break;
+            
+            case 'comunas':
+                return rest_url('/wc-vwd-sipping/comunas-por-region/');
+                break;
+
+        }
+
+        return null;
     }
 
     public function sendLocations( $request ){
@@ -83,6 +98,17 @@ class JGBVWDSRestApi{
             ];
         }
 
+        $res = [];
+
+        $res['draw']            = $_GET['draw'];
+        $res['recordsTotal']    = $rec_count;
+        $res['recordsFiltered'] = count( $locations_raw );
+        $res['data']            = $locations_raw;
+
+        $response = new WP_REST_Response( $res );
+        $response->set_status( 200 );
+
+        return $response;
     }
     
     public function getComunasByRegion( $request ){

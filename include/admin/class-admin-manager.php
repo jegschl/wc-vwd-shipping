@@ -8,12 +8,14 @@ class JGBVWDSAdminManager {
 
     private $assetsPath;
     private $assetsUrlPrfx;
-    private $urlGetLoctns;
+    
+    private $restAPIer;
 
-    function __constructor($config){
-        $this->assetsPath    = $config['assetsPath'];
-        $this->assetsUrlPrfx = $config['assetsUrlPrfx'];
-        $this->urlGetLoctns  = $config['urlGetLocations'];
+    function __construct($config){
+        $this->assetsPath    = isset( $config['assetsPath'] ) ? $config['assetsPath'] : plugins_url(__FILE__) . '/assets';
+        $this->assetsUrlPrfx = isset( $config['assetsUrlPrfx'] ) ? $config['assetsUrlPrfx'] : plugins_url(__FILE__) . '/assets';
+        
+        $this->restAPIer     = $config['restAPIer'];
     }
 
     public function menu(){
@@ -67,7 +69,7 @@ class JGBVWDSAdminManager {
 
     public function locations_list_html_render(){
 
-        add_action('admin_enqueue_scripts',[$this,'enqueue_js_locations']);
+        
 
         $path = __DIR__ . '/views/html-adm-locations-list.php';
         include $path;
@@ -75,30 +77,50 @@ class JGBVWDSAdminManager {
     }
 
     public function enqueue_js_locations(){
-        $script_fl = 'https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js';
-		wp_enqueue_script(
-			'jgb_vwds_jquery_datatable', 
-			$script_fl,
-			array('jquery'),
-			null,
-			false
-		);
+        if( $this->is_admin_setting_locations() ){
+            $script_fl = 'https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js';
+            wp_enqueue_script(
+                'jgb_vwds_jquery_datatable', 
+                $script_fl,
+                array('jquery'),
+                null,
+                false
+            );
 
-        $script_data = [
-            'urlGetLocations' => $this->urlGetLoctns
-        ];
+            $script_data = [
+                'urlGetLocations' => $this->restAPIer->get_endpoint_base('locations')
+            ];
 
-        $script_fl  = '/admin-locations.js';
-        $tversion = filemtime($this->assetsPath . $script_fl);
-        $script_url = plugin_dir_url( __FILE__ ) . $script_fl;
-        wp_enqueue_script(
-			'jgb_vwds-admin-locations',
-			$script_url,
-			array('jquery'),
-			null,
-			false
-		);
+            $script_fl  = '/js/admin-locations.js';
+            $tversion = filemtime($this->assetsPath . $script_fl);
+            $script_url = $this->assetsUrlPrfx . $script_fl;
+            wp_enqueue_script(
+                'jgb_vwds-admin-locations',
+                $script_url,
+                array('jquery'),
+                $tversion,
+                false
+            );
 
-        wp_localize_script('jgb_vwds-admin-locations','JGB_VWDS',$script_data);
+            wp_localize_script('jgb_vwds-admin-locations','JGB_VWDS',$script_data);
+        }
+    }
+
+    public function is_admin_setting_locations(){
+        // page=jgb-vwds-settings&tab=locations
+
+        if( !isset( $_GET['page']) ){
+            return false;
+        }
+
+        if( $_GET['page'] != 'jgb-vwds-settings' ){
+            return false;
+        }
+
+        if( isset( $_GET['tab'] ) && $_GET['tab'] != 'locations' ){
+            return false;
+        }
+
+        return true;
     }
 }

@@ -17,6 +17,7 @@
     <table id="tabla" class="display">
         <thead class="thead">
             <tr class="tr">
+                <th>Selección</th>
                 <th>Código</th>
                 <th>Tipo</th>				
                 <th>Título</th>
@@ -27,6 +28,7 @@
         <!--body-->
         <tfoot>
             <tr class="tr">
+                <th>Selección</th>
                 <th>Código</th>
                 <th>Tipo</th>				
                 <th>Título</th>
