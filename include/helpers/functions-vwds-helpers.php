@@ -68,3 +68,17 @@ function emp_set_state_list($vl){
 	}
 	return array('CL' => $vl);
 }
+
+if (!function_exists('write_log')) {
+
+    function write_log($log) {
+        if (true === WP_DEBUG) {
+            if (is_array($log) || is_object($log)) {
+                error_log(print_r($log, true));
+            } else {
+                error_log($log);
+            }
+        }
+    }
+
+}
