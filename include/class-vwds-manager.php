@@ -29,6 +29,10 @@ class JGBVWDS_Manager{
 
     private $restApi;
 
+	private $dbInitzr;
+
+	private $adminMan;
+
     /**
 	 * Constructor loads API functions, defines paths and adds required wp actions
 	 *
@@ -72,6 +76,7 @@ class JGBVWDS_Manager{
 			'UPDATERS_DIR' => $dir . '/include/classes/updaters',
 			'VENDORS_DIR' => $dir . '/include/classes/vendors',
 			'DEPRECATED_DIR' => $dir . '/include/classes/deprecated',
+			'ADMIN' => $dir . '/include/admin'
 		) );
 		// Load API
 
@@ -142,6 +147,8 @@ class JGBVWDS_Manager{
                 'save_product_vol_weight_shipping_opts'
             )
         );
+
+		add_action( 'admin_menu', [$this->adminMan,'menu'] );
     }
 
     private function public_hooks(){
@@ -188,11 +195,12 @@ class JGBVWDS_Manager{
     private function load_php_api(){
         //require_once $this->path( 'HELPERS_DIR', 'functions-vwds-helpers.php' );
         
-        
+        require_once $this->path( 'HELPERS_DIR', 'functions-jgb-wp.php' );
         require_once $this->path( 'CORE_DIR', 'class-vwds-product-flds.php' );
         require_once $this->path( 'CORE_DIR', 'class-vwds-checkout-flds.php' );
         require_once $this->path( 'CORE_DIR', 'class-vwds-rest-api.php' );
         require_once $this->path( 'CONFIG_DIR', 'class-db-config.php' );
+		require_once $this->path( 'ADMIN', 'class-admin-manager.php' );
 
 		/* la clase de wc_vwds_Shipping_Method hay que cargarla después
 		 * de que inicialice el sistema de envíos de WC. */
@@ -209,7 +217,16 @@ class JGBVWDS_Manager{
 
         $this->restApi = new JGBVWDSRestApi;
 
-        //$this->dbInitzr = new JGBVWDSDbInitializator;
+        $this->dbInitzr = new JGBVWDSDbInitializator;
+
+		$cfg = [
+			'assetsPath' 		=> '',
+			'assetsUrlPrfx' 	=> '',
+			'urlGetLocations'	=> rest_url( '/wc-vwd-sipping/locations/' )
+		];
+		
+
+		$this->adminMan = new JGBVWDSAdminManager;
     }
 
     /**

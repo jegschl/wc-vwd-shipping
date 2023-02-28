@@ -25,6 +25,64 @@ class JGBVWDSRestApi{
                 )
             )
         );
+
+        register_rest_route(
+            'wc-vwd-sipping/',
+            '/locations',
+            array(
+                'methods'  => 'GET',
+                'callback' => 'sendLocations',
+                'permission_callback' => '__return_true',
+            )
+        );
+
+
+    }
+
+    public function sendLocations( $request ){
+        global $wpdb;
+
+        $select  = "SELECT * FROM wp_wc_vwds_locations ";
+
+        $select_prepare_count = "SELECT SQL_CALC_FOUND_ROWS * FROM wp_wc_vwds_locations ";
+        
+        $select_get_count = "SELECT FOUND_ROWS() AS total_rcds";
+
+        $where = '';
+        if(isset($_GET['search']) && !empty($_GET['search'])){
+            $sv = $_GET['search']['value'];
+            $where = "WHERE `desc`LIKE '%$sv%' ";
+        }
+
+        if(isset($_GET['length']) && $_GET['length']>0)
+            $limit = ' LIMIT ' . $_GET['start'] . ',' . $_GET['length'];
+        else 
+            $limit = ' LIMIT 10';
+
+
+        $orderby = "ORDER BY `desc` ASC ";
+
+        $isql_scount = $select_prepare_count . $where;
+        $isql_gcount = $select_get_count;
+        $isql        = $select . $where . $orderby . $limit;
+
+        $wpdb->get_results( $isql_scount );
+
+        $rec_count = $wpdb->get_row($isql_gcount);
+
+        $locations = $wpdb->get_results( $isql );
+
+        $locations_raw = [];
+        foreach( $locations as $l ){
+            $locations_raw[] = [
+                'DT_RowId'         => $l->id,
+                'location_code'    => $l->location_code,
+                'type'             => $l->type,
+                'title'            => $l->desc,
+                'parent'           => $l->parent    
+            ];
+        }
+
     }
     
     public function getComunasByRegion( $request ){
