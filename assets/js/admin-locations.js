@@ -50,9 +50,20 @@
         $(itemActionReqSendDwldCodeSelector).on('click',dttblItemActionReqSendDownloadCodeEmail); */
     }
 
+    function add_new_row(){
+        dttbl.fnAddData([
+            null,
+            '<input type="text" id="newRowLocationCode" />',
+            '<input type="text" id="newRowDescription" />',
+            '<input type="text" id="newRowParent" />',
+            null
+        ]);
+    }
+
     $(document).ready(function () {
+        $('#add_row').click(add_new_row);
         
-        dttbl = $('#tabla').DataTable( {
+        dttbl = $('#jgb-vwds-location-list #locations-table').DataTable( {
             processing: true,
             serverSide: true,
             ajax: JGB_VWDS.urlGetLocations,

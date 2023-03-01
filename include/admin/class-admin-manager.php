@@ -69,11 +69,14 @@ class JGBVWDSAdminManager {
 
     public function locations_list_html_render(){
 
-        
-
         $path = __DIR__ . '/views/html-adm-locations-list.php';
         include $path;
 
+    }
+
+    public function locations_form_add_new_html_render(){
+        $path = __DIR__ . '/views/html-adm-locations-add-new.php';
+        include $path;
     }
 
     public function enqueue_js_locations(){

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Admin View: Settings
+ * Admin View: Settings Locations
  *
  * @package jgb-vwds
  */
@@ -12,16 +12,17 @@
 
 ?>
 
-<section id="location-list">
+<section id="jgb-vwds-location-list">
     
-    <table id="tabla" class="display">
+    <?php do_action('JGB/VWDS/admin_settings_locations_before_datatable'); ?>
+    <table id="locations-table" class="display">
         <thead class="thead">
             <tr class="tr">
                 <th>Selección</th>
                 <th>Código</th>
                 <th>Tipo</th>				
                 <th>Título</th>
-                <th>Locación superior</th>
+                <th>Código de Locación superior</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -32,11 +33,12 @@
                 <th>Código</th>
                 <th>Tipo</th>				
                 <th>Título</th>
-                <th>Locación superior</th>
+                <th>Código de Locación superior</th>
                 <th>Acciones</th>
             </tr>
         </tfoot>
 
     </table>
-   
+    <?php do_action('JGB/VWDS/admin_settings_locations_after_datatable'); ?>
+    
 </section>
