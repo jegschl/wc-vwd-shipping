@@ -58,8 +58,8 @@ class JGBVWDSDbInitializator{
           $isql  = "INSERT INTO `wp_wc_vwds_zones` (id,code,`desc`) ";
           $isql .= "VALUES (";
           $isql .= "0,";
-          $isql .= "'zones-weights-disabled',";
-          $isql .= "'Zones Weights disabled'";
+          $isql .= "'". JGB_VWDS_NOZONES_AN_CODE ."',";
+          $isql .= "'". JGB_VWDS_NOZONES_AN_DESC ."'";
           $isql .= ")";
           $wpdb->query( $isql );
         }
