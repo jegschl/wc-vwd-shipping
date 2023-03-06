@@ -1,0 +1,9 @@
+.buttons .uploading img {
+	width: 20px;
+	border-radius: 25px;
+}
+
+.container.buttons {
+	display: flex;
+	align-items: center;
+}

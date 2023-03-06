@@ -2,6 +2,11 @@
 	'use strict';
 
     let dttbl = null;
+    let isFormValid;
+    let isFormSaving;
+
+    const btn_save = '#new-location-form .buttons .button.save';
+    const img_spinner = '#new-location-form .buttons .uploading img';
 
     function actions_data_render(data, type){
 		if (type === 'display') {
@@ -60,6 +65,122 @@
         ]);
     }
 
+    function button_save_set_disabled(){
+        if( !$(btn_save).hasClass('disabled') ){
+            $(btn_save).addClass('disabled');
+        }
+    }
+
+    function button_save_set_enabled(){
+        if($(btn_save).hasClass('disabled')){
+            $(btn_save).removeClass('disabled');
+        }
+    }
+
+    function activate_spinner_img(){
+        
+        if($(img_spinner).hasClass('hidden')){
+            $(img_spinner).removeClass('hidden');
+        }
+    }
+
+    function deactivate_spinner_img(){
+        if(!$(img_spinner).hasClass('hidden')){
+            $(img_spinner).addClass('hidden');
+        }
+    }
+    
+    function validate_form_fields(){
+        isFormValid = true;
+        if( $('#location-code').val() == '' )
+            isFormValid = false;
+
+        if( $('#location-type').val() == '' )
+            isFormValid = false;
+
+        if( $('#location-title').val() == '' )
+            isFormValid = false;
+
+        if( isFormValid ){
+            button_save_set_enabled();
+        } else {
+            button_save_set_disabled();
+        }
+    }
+
+    function set_form_add_new_saving(){
+        isFormSaving = true;
+        button_save_set_disabled();
+        activate_spinner_img();
+    }
+
+    function set_form_add_new_no_saving(){
+        isFormSaving = false;
+        button_save_set_enabled();
+        deactivate_spinner_img();
+    }
+
+    function reset_form_add_new_fields(){
+        $('#location-code').val('');
+        $('#location-type').val('');
+        $('#location-title').val('');
+        $('#location-parent').val('');
+    }
+
+    function reset_form_add_new_result(){
+        $('.result-notice .error').addClass('hidden');
+        $('.result-notice .success').addClass('hidden');
+    }
+
+    function inputChange(){
+        reset_form_add_new_result();
+        validate_form_fields();
+            
+    }
+
+    function prepare_data_to_send(){
+        const locationData = {
+            'code': $('#location-code').val(),
+            'type': $('#location-type').val(),
+            'title': $('#location-title').val(),
+            'parent': $('#location-parent').val(),
+            'nonce': $('#vwds-locations').val()
+        }
+
+        return locationData;
+    }
+
+    function try_send_new_location(){
+        if( isFormValid ){
+            set_form_add_new_saving();
+
+            const dt = prepare_data_to_send();
+
+            const ajxConfig = {
+                url: JGB_VWDS.urlGetLocations,
+                contentType: "application/json; charset=UTF-8",
+                data: dt,
+                method: 'POST',
+                error: function(  jqXHR,  textStatus,  errorThrown){
+                    $('.result-notice .error').removeClass('hidden');
+                },
+                success: function( data,  textStatus,  jqXHR){
+                    $('.result-notice .success').removeClass('hidden');
+                    reset_form_add_new_fields();
+                    //reload datatable
+                    dttbl.ajax.reload();
+                },
+                complete: function( jqXHR,  textStatus){
+                    set_form_add_new_no_saving();
+                    
+                }
+            };
+
+            $.ajax(ajxConfig);
+
+        }
+    }
+
     $(document).ready(function () {
         $('#add_row').click(add_new_row);
         
@@ -94,6 +215,13 @@
             ],
             drawCallback: onDttblDraw
         } );
+
+        $('#location-code').change(inputChange);
+        $('#location-type').change(inputChange);
+        $('#location-title').change(inputChange);
+        $('#location-parent').change(inputChange);
+
+        $('#new-location-form .buttons .button.save').click(try_send_new_location);
 
     });
 

@@ -37,6 +37,13 @@
             </div>
         </div>
         <div class="container buttons">
-            <div class="button save">Guardar</div>
+            <div class="button save disabled">Guardar</div>
+            <div class="uploading">
+                <img class="hidden" src="<?= $img_path_spinner ?>">
+            </div>
+        </div>
+        <div class="result-notice">
+            <div class="error hidden">No se ha podido almacenar una nueva locación.</div>
+            <div class="success hidden">Se ha guardado correctamente una nueva locación.</div>
         </div>
     </div>

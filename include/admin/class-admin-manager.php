@@ -11,11 +11,18 @@ class JGBVWDSAdminManager {
     
     private $restAPIer;
 
+    private $img_path_spinner;
+
     function __construct($config){
-        $this->assetsPath    = isset( $config['assetsPath'] ) ? $config['assetsPath'] : plugins_url(__FILE__) . '/assets';
-        $this->assetsUrlPrfx = isset( $config['assetsUrlPrfx'] ) ? $config['assetsUrlPrfx'] : plugins_url(__FILE__) . '/assets';
+        $this->assetsPath       = isset( $config['assetsPath'] ) ? $config['assetsPath'] : plugins_url(__FILE__) . '/assets';
+        $this->assetsUrlPrfx    = isset( $config['assetsUrlPrfx'] ) ? $config['assetsUrlPrfx'] : plugins_url(__FILE__) . '/assets';
         
-        $this->restAPIer     = $config['restAPIer'];
+        $this->restAPIer        = $config['restAPIer'];
+        $this->img_path_spinner = $this->get_img_path_spinner();
+    }
+
+    public function get_img_path_spinner(){
+        return $this->assetsUrlPrfx . '/imgs/spinner.gif';
     }
 
     public function menu(){
@@ -75,6 +82,7 @@ class JGBVWDSAdminManager {
     }
 
     public function locations_form_add_new_html_render(){
+        $img_path_spinner = $this->img_path_spinner;
         $path = __DIR__ . '/views/html-adm-locations-add-new.php';
         include $path;
     }
@@ -98,14 +106,28 @@ class JGBVWDSAdminManager {
             $tversion = filemtime($this->assetsPath . $script_fl);
             $script_url = $this->assetsUrlPrfx . $script_fl;
             wp_enqueue_script(
-                'jgb_vwds-admin-locations',
+                'jgb_vwds-admin-locations-js',
                 $script_url,
                 array('jquery'),
                 $tversion,
                 false
             );
 
-            wp_localize_script('jgb_vwds-admin-locations','JGB_VWDS',$script_data);
+            wp_localize_script('jgb_vwds-admin-locations-js','JGB_VWDS',$script_data);
+        }
+    }
+
+    public function enqueue_css_locations(){
+        if( $this->is_admin_setting_locations() ){
+            $script_fl  = '/css/admin-locations.css';
+            $tversion = filemtime($this->assetsPath . $script_fl);
+            $script_url = $this->assetsUrlPrfx . $script_fl;
+            wp_enqueue_style(
+                'jgb_vwds-admin-locations-css',
+                $script_url,
+                array(),
+                $tversion
+            );
         }
     }
 
