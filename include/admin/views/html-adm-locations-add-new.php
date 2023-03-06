@@ -15,6 +15,7 @@
     <div id="new-location-form">
         <h3 class="title">Agrege una nueva locación</h3>
         <div class="container fields">
+            <?= wp_nonce_field( JGB_VWDS_LOCATIONS_NONCE_KEY_NM ); ?>
             <div class="field location-code">
                 <div class="label"><label for="location-code">Código</label></div>
                 <div class="input"><input type="text" id="location-code" /></div>
