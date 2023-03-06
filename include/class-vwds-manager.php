@@ -3,6 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
+define('JGB_VWDS_NOZONES_AN_CODE','zones-weights-disabled');
+define('JGB_VWDS_NOZONES_AN_DESC','Zones Weights disabled');
+define('JGB_VWDS_LOCATIONS_NONCE_KEY_NM','vwds-locations');
+
 class JGBVWDS_Manager{
     /**
 	 * Core singleton class
@@ -32,6 +36,8 @@ class JGBVWDS_Manager{
 	private $dbInitzr;
 
 	private $adminMan;
+
+	private $locations;
 
     /**
 	 * Constructor loads API functions, defines paths and adds required wp actions
@@ -204,6 +210,7 @@ class JGBVWDS_Manager{
         require_once $this->path( 'CORE_DIR', 'class-vwds-product-flds.php' );
         require_once $this->path( 'CORE_DIR', 'class-vwds-checkout-flds.php' );
         require_once $this->path( 'CORE_DIR', 'class-vwds-rest-api.php' );
+		require_once $this->path( 'CORE_DIR', 'class-vwds-locations.php' );
         require_once $this->path( 'CONFIG_DIR', 'class-db-config.php' );
 		require_once $this->path( 'ADMIN', 'class-admin-manager.php' );
 
@@ -220,7 +227,9 @@ class JGBVWDS_Manager{
 
         $this->checkoutFlds = new JGBVWDSCheckoutFields;
 
-        $this->restApi = new JGBVWDSRestApi;
+		$this->locations = new JGBVWDSLocations;
+
+        $this->restApi = new JGBVWDSRestApi( $this->locations );
 
         $this->dbInitzr = new JGBVWDSDbInitializator;
 

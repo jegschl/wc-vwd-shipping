@@ -8,6 +8,13 @@ if ( ! defined( 'WPINC' ) ) {
 
 
 class JGBVWDSRestApi{
+
+    private $locations;
+
+    function __construct(JGBVWDSLocations $locations){
+        $this->locations = $locations;
+    }
+
     public function set_endpoints(){
         register_rest_route(
             'wc-vwd-sipping/',
@@ -31,13 +38,25 @@ class JGBVWDSRestApi{
             '/locations/',
             array(
                 'methods'  => 'GET',
-                'callback' => [$this,'sendLocations'],
+                'callback' => [$this->locations,'sendLocations'],
+                'permission_callback' => '__return_true',
+            )
+        );
+
+        register_rest_route(
+            'wc-vwd-sipping/',
+            '/locations/',
+            array(
+                'methods'  => 'POST',
+                'callback' => [$this->locations,'receiveNewLocation'],
                 'permission_callback' => '__return_true',
             )
         );
 
 
     }
+
+    
 
     public function get_endpoint_base($endpoint_name){
         switch($endpoint_name){
@@ -54,62 +73,7 @@ class JGBVWDSRestApi{
         return null;
     }
 
-    public function sendLocations( $request ){
-        global $wpdb;
-
-        $select  = "SELECT * FROM wp_wc_vwds_locations ";
-
-        $select_prepare_count = "SELECT SQL_CALC_FOUND_ROWS * FROM wp_wc_vwds_locations ";
-        
-        $select_get_count = "SELECT FOUND_ROWS() AS total_rcds";
-
-        $where = '';
-        if(isset($_GET['search']) && !empty($_GET['search'])){
-            $sv = $_GET['search']['value'];
-            $where = "WHERE `desc`LIKE '%$sv%' ";
-        }
-
-        if(isset($_GET['length']) && $_GET['length']>0)
-            $limit = ' LIMIT ' . $_GET['start'] . ',' . $_GET['length'];
-        else 
-            $limit = ' LIMIT 10';
-
-
-        $orderby = "ORDER BY `desc` ASC ";
-
-        $isql_scount = $select_prepare_count . $where;
-        $isql_gcount = $select_get_count;
-        $isql        = $select . $where . $orderby . $limit;
-
-        $wpdb->get_results( $isql_scount );
-
-        $rec_count = $wpdb->get_row($isql_gcount);
-
-        $locations = $wpdb->get_results( $isql );
-
-        $locations_raw = [];
-        foreach( $locations as $l ){
-            $locations_raw[] = [
-                'DT_RowId'         => $l->id,
-                'location_code'    => $l->location_code,
-                'type'             => $l->type,
-                'title'            => $l->desc,
-                'parent'           => $l->parent    
-            ];
-        }
-
-        $res = [];
-
-        $res['draw']            = $_GET['draw'];
-        $res['recordsTotal']    = $rec_count;
-        $res['recordsFiltered'] = count( $locations_raw );
-        $res['data']            = $locations_raw;
-
-        $response = new WP_REST_Response( $res );
-        $response->set_status( 200 );
-
-        return $response;
-    }
+    
     
     public function getComunasByRegion( $request ){
         $region_id = $request->get_param( 'region_id' );
