@@ -13,9 +13,15 @@
 ?>
 
     <div id="new-location-form">
+        <div id="remove-confirm-dlg" class="hidden" title="Eliminación de locación">
+            <p>
+                <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
+                Por favor confirmar eliminación de locación.
+            </p>
+        </div>  
         <h3 class="title">Agrege una nueva locación</h3>
         <div class="container fields">
-            <?= wp_nonce_field( JGB_VWDS_LOCATIONS_NONCE_KEY_NM ); ?>
+            <input type="hidden" id="<?= JGB_VWDS_LOCATIONS_NONCE_KEY_NM ?>" value="<?= $nonce ?>">
             <div class="field location-code">
                 <div class="label"><label for="location-code">Código</label></div>
                 <div class="input"><input type="text" id="location-code" /></div>
@@ -42,8 +48,6 @@
                 <img class="hidden" src="<?= $img_path_spinner ?>">
             </div>
         </div>
-        <div class="result-notice">
-            <div class="error hidden">No se ha podido almacenar una nueva locación.</div>
-            <div class="success hidden">Se ha guardado correctamente una nueva locación.</div>
+        <div class="result-notice hidden">
         </div>
     </div>

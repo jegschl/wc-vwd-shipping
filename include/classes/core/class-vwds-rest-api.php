@@ -53,6 +53,16 @@ class JGBVWDSRestApi{
             )
         );
 
+        register_rest_route(
+            'wc-vwd-sipping/',
+            '/rem-locations/',
+            array(
+                'methods'  => 'POST',
+                'callback' => [$this->locations,'removeLocations'],
+                'permission_callback' => '__return_true',
+            )
+        );
+
 
     }
 
@@ -60,6 +70,10 @@ class JGBVWDSRestApi{
 
     public function get_endpoint_base($endpoint_name){
         switch($endpoint_name){
+            case 'remove-location':
+                return rest_url('/wc-vwd-sipping/rem-locations/');
+                break;
+
             case 'locations':
                 return rest_url('/wc-vwd-sipping/locations/');
                 break;

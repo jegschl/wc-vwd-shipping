@@ -22,7 +22,8 @@
                 <th>Código</th>
                 <th>Tipo</th>				
                 <th>Título</th>
-                <th>Código de Locación superior</th>
+                <th>Locación superior</th>
+                <th>Activa</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -33,7 +34,8 @@
                 <th>Código</th>
                 <th>Tipo</th>				
                 <th>Título</th>
-                <th>Código de Locación superior</th>
+                <th>Locación superior</th>
+                <th>Activa</th>
                 <th>Acciones</th>
             </tr>
         </tfoot>

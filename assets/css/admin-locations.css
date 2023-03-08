@@ -1,4 +1,5 @@
-.buttons .uploading img {
+.buttons .uploading img,
+#locations-table .actions .status.removing img {
 	width: 20px;
 	border-radius: 25px;
 }
@@ -6,4 +7,22 @@
 .container.buttons {
 	display: flex;
 	align-items: center;
+}
+
+#locations-table .actions, #locations-table .actions .status.removing{
+	display: flex;
+	flex-wrap: nowrap;
+}
+
+#locations-table .actions .status.removing.hidden{
+	display: none;
+	visibility: hidden;
+}
+
+#locations-table .actions .action:hover .dashicons{
+	font-size: 25px;
+}
+
+#locations-table .actions .action {
+	cursor: pointer ;
 }

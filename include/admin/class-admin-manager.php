@@ -30,7 +30,7 @@ class JGBVWDSAdminManager {
 			'VWD Shipping', 
 			'VWD Shipping', 
 			'manage_options', 
-			'jgb-vwds-settings',  //'dosf/dosf-admin.php', 
+			'jgb-vwds-settings',  
 			array($this,'admin_page'), 
 			'dashicons-forms', 
 			11
@@ -83,7 +83,14 @@ class JGBVWDSAdminManager {
 
     public function locations_form_add_new_html_render(){
         $img_path_spinner = $this->img_path_spinner;
+        $nonce = wp_create_nonce( JGB_VWDS_LOCATIONS_NONCE_ACT_NM );
         $path = __DIR__ . '/views/html-adm-locations-add-new.php';
+        include $path;
+    }
+
+    public function locations_list_actions_html_render(){
+        $img_path_spinner = $this->img_path_spinner;
+        $path = __DIR__ . '/views/html-adm-locations-actions.php';
         include $path;
     }
 
@@ -98,8 +105,16 @@ class JGBVWDSAdminManager {
                 false
             );
 
+            wp_deregister_script('jquery-ui');
+            wp_register_script('jquery-ui', 'https://code.jquery.com/ui/1.13.2/jquery-ui.js');
+
+            ob_start();
+            $this->locations_list_actions_html_render();
+            $actsHtml = ob_get_clean();
             $script_data = [
-                'urlGetLocations' => $this->restAPIer->get_endpoint_base('locations')
+                'urlGetLocations' => $this->restAPIer->get_endpoint_base('locations'),
+                'urlDelLocations' => $this->restAPIer->get_endpoint_base('remove-location'),
+                'actionsHtml'     => $actsHtml
             ];
 
             $script_fl  = '/js/admin-locations.js';
@@ -108,7 +123,10 @@ class JGBVWDSAdminManager {
             wp_enqueue_script(
                 'jgb_vwds-admin-locations-js',
                 $script_url,
-                array('jquery'),
+                [
+                    'jquery',
+                    'jquery-ui'
+                ],
                 $tversion,
                 false
             );

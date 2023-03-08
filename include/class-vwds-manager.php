@@ -6,6 +6,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 define('JGB_VWDS_NOZONES_AN_CODE','zones-weights-disabled');
 define('JGB_VWDS_NOZONES_AN_DESC','Zones Weights disabled');
 define('JGB_VWDS_LOCATIONS_NONCE_KEY_NM','vwds-locations');
+define('JGB_VWDS_LOCATIONS_NONCE_ACT_NM','vwds-locations-action');
+define('JGB_VWDS_LOCATIONS_UPSERT_ERR_CTT_EMPTY',1);
+define('JGB_VWDS_LOCATIONS_UPSERT_ERR_NVLDPRNT' ,2);
+define('JGB_VWDS_LOCATIONS_UPSERT_ERR_SQL'		,3);
+define('JGB_VWDS_LOCATIONS_UPSERT_ERR_NONCE'	,4);
 
 class JGBVWDS_Manager{
     /**
@@ -160,7 +165,7 @@ class JGBVWDS_Manager{
 		add_action('admin_enqueue_scripts',[$this->adminMan,'enqueue_css_locations']);
 		add_action( 'JGB/VWDS/sections_locations', [$this->adminMan,'locations_list_html_render']);
 		add_action( 'JGB/VWDS/admin_settings_locations_before_datatable', [$this->adminMan,'locations_form_add_new_html_render']);
-		add_action( 'JGB/VWDS/admin_settings_locations_after_datatable', [$this->adminMan,'locations_form_add_new_html_render']);
+		//add_action( 'JGB/VWDS/admin_settings_locations_after_datatable', [$this->adminMan,'locations_form_add_new_html_render']);
     }
 
     private function public_hooks(){

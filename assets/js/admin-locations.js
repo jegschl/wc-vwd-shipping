@@ -4,33 +4,16 @@
     let dttbl = null;
     let isFormValid;
     let isFormSaving;
+    let remConfirmDlg;
+    let locationToRemove;
 
     const btn_save = '#new-location-form .buttons .button.save';
     const img_spinner = '#new-location-form .buttons .uploading img';
 
     function actions_data_render(data, type){
 		if (type === 'display') {
-			var output = '';
-			output += '<div class="actions">';
-
-			output += '<div class="action edit">';
-			output += '<i class="fas fa-edit"></i>'; // icono de edición 
-			output += '</div>';
-
-			output += '<div class="action remove">';
-			output += '<i class="fas fa-minus-circle"></i>'; // icono de eliminación
-			output += '</div>';
-
-            output += '<div class="action update_ok">';
-			output += '<i class="fas fa-minus-circle"></i>'; // icono de Ok, guardar cambios.
-			output += '</div>';
-
-            output += '<div class="action update_cancel">';
-			output += '<i class="fas fa-minus-circle"></i>'; // icono de Cancelar cambios.
-			output += '</div>';
-
-			output += '</div>';
-            return output ;
+			
+            return JGB_VWDS.actionsHtml ;
         }
          
         return data;
@@ -49,10 +32,46 @@
         return data;
     }
 
+    function confirmRemoveLocation(){
+        locationToRemove = [ $(this).closest('tr').attr('id') ];
+        remConfirmDlg.dialog( "open" );
+    }
+
+    function setLocationInRomevingMode(){
+        let i,ltrc,trslctr;
+        ltrc = locationToRemove.length;
+
+        trslctr = '';
+        for(i = 0; i < ltrc; i++){
+            if( i>=1 ){
+                trslctr += ', ';
+            }
+            trslctr += '#locations-table tbody tr#' + locationToRemove[i];
+            trslctr += ' .actions';
+        }
+
+        if( !$(trslctr + ' .action').hasClass('hidden') ){
+            $(trslctr + ' .action').addClass('hidden');
+        }
+
+        if( $(trslctr + ' .status').hasClass('hidden') ){
+            $(trslctr + ' .status').removeClass('hidden');
+        }
+    }
+
+    function prepareEditLocation(){
+
+    }
+
     function onDttblDraw(){
-        const itemActionReqSendDwldCodeSelector = '.action.send-dosf-download-code';
-        /* $(itemActionReqSendDwldCodeSelector).off('click');
-        $(itemActionReqSendDwldCodeSelector).on('click',dttblItemActionReqSendDownloadCodeEmail); */
+        const itemActionReqRemoveLocation = '#locations-table .actions .action.remove';
+        $(itemActionReqRemoveLocation).off('click');
+        $(itemActionReqRemoveLocation).on('click', confirmRemoveLocation);
+    
+        const itemActionReqEditLocation = '#locations-table .actions .action.edit';
+        $(itemActionReqEditLocation).off('click');
+        $(itemActionReqEditLocation).on('click', prepareEditLocation);
+    
     }
 
     function add_new_row(){
@@ -128,8 +147,23 @@
     }
 
     function reset_form_add_new_result(){
-        $('.result-notice .error').addClass('hidden');
-        $('.result-notice .success').addClass('hidden');
+        $('.result-notice').removeClass('success');
+        $('.result-notice').removeClass('error');
+        $('.result-notice').addClass('hidden');
+    }
+
+    function set_form_add_new_result_error(){
+        $('.result-notice').removeClass('success');
+        $('.result-notice').removeClass('hidden');
+        $('.result-notice').addClass('error');
+        $('.result-notice').text('No se ha podido guardara.');
+    }
+
+    function set_form_add_new_result_success(){
+        $('.result-notice').removeClass('error');
+        $('.result-notice').removeClass('hidden');
+        $('.result-notice').addClass('success');
+        $('.result-notice').text('Locación actualizada exitosamente.');
     }
 
     function inputChange(){
@@ -144,17 +178,44 @@
             'type': $('#location-type').val(),
             'title': $('#location-title').val(),
             'parent': $('#location-parent').val(),
-            'nonce': $('#vwds-locations').val()
+            'vwds-locations-nonce': $('#vwds-locations').val()
         }
 
         return locationData;
     }
 
-    function try_send_new_location(){
+    function try_send_del_location_req(){
+        if( locationToRemove.length > 0 ){
+            const dt = JSON.stringify(locationToRemove);
+
+            const ajxConfig = {
+                url: JGB_VWDS.urlDelLocations,
+                contentType: "application/json; charset=UTF-8",
+                data: dt,
+                method: 'POST',
+                error: function(  jqXHR,  textStatus,  errorThrown){
+                    console.log('No se pudo eliminar la locación.');
+                },
+                success: function( data,  textStatus,  jqXHR){
+                
+                    if( data.err_status != undefined && data.err_status == 0){
+                        dttbl.ajax.reload();
+                    } else {
+                        console.log('No se pudo eliminar la locación.');
+                    }
+                    
+                }
+            };
+
+            $.ajax(ajxConfig);
+        }
+    }
+
+    function try_send_new_location_req(){
         if( isFormValid ){
             set_form_add_new_saving();
 
-            const dt = prepare_data_to_send();
+            const dt = JSON.stringify(prepare_data_to_send());
 
             const ajxConfig = {
                 url: JGB_VWDS.urlGetLocations,
@@ -162,13 +223,19 @@
                 data: dt,
                 method: 'POST',
                 error: function(  jqXHR,  textStatus,  errorThrown){
-                    $('.result-notice .error').removeClass('hidden');
+                    set_form_add_new_result_error();
                 },
                 success: function( data,  textStatus,  jqXHR){
-                    $('.result-notice .success').removeClass('hidden');
-                    reset_form_add_new_fields();
-                    //reload datatable
-                    dttbl.ajax.reload();
+                
+                    if( data.err_status != undefined && data.err_status == 0){
+                        set_form_add_new_result_success();
+                        //reload datatable
+                        dttbl.ajax.reload();
+                        reset_form_add_new_fields();
+                    } else {
+                        set_form_add_new_result_error();
+                    }
+                    
                 },
                 complete: function( jqXHR,  textStatus){
                     set_form_add_new_no_saving();
@@ -209,6 +276,9 @@
                     data: 'parent'
                 },
                 {
+                    data: 'active'
+                },
+                {
                     data: 'actions',
                     render: actions_data_render
                 }
@@ -221,8 +291,26 @@
         $('#location-title').change(inputChange);
         $('#location-parent').change(inputChange);
 
-        $('#new-location-form .buttons .button.save').click(try_send_new_location);
+        $('#new-location-form .buttons .button.save').click(try_send_new_location_req);
 
+        remConfirmDlg = $( "#remove-confirm-dlg" ).dialog({
+            autoOpen: false,
+            resizable: false,
+            height: "auto",
+            width: 400,
+            modal: true,
+            closeText: "",
+            buttons: {
+              "Eliminar": function() {
+                $( this ).dialog( "close" );
+                setLocationInRomevingMode();
+                try_send_del_location_req();
+              },
+              Cancelar: function() {
+                $( this ).dialog( "close" );
+              }
+            }
+        }); 
     });
 
 })(jQuery);
