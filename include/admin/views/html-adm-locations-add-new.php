@@ -48,6 +48,6 @@
                 <img class="hidden" src="<?= $img_path_spinner ?>">
             </div>
         </div>
-        <div class="result-notice hidden">
+        <div class="result-notice notice hidden">
         </div>
     </div>

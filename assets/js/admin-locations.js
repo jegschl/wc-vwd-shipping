@@ -171,22 +171,22 @@
     }
 
     function reset_form_add_new_result(){
-        $('.result-notice').removeClass('success');
+        $('.result-notice').removeClass('notice-success');
         $('.result-notice').removeClass('error');
         $('.result-notice').addClass('hidden');
     }
 
     function set_form_add_new_result_error(){
-        $('.result-notice').removeClass('success');
+        $('.result-notice').removeClass('notice-success');
         $('.result-notice').removeClass('hidden');
         $('.result-notice').addClass('error');
-        $('.result-notice').text('No se ha podido guardara.');
+        $('.result-notice').text('No se ha podido guardar.');
     }
 
     function set_form_add_new_result_success(){
         $('.result-notice').removeClass('error');
         $('.result-notice').removeClass('hidden');
-        $('.result-notice').addClass('success');
+        $('.result-notice').addClass('notice-success');
         $('.result-notice').text('Locación actualizada exitosamente.');
     }
 
