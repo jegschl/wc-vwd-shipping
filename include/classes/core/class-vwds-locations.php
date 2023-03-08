@@ -7,39 +7,40 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 class JGBVWDSLocations{
-    public function receiveNewLocation( $r ){
-        global $wpdb;
-        $nldt = $r->get_json_params();
+
+    public function validateNewLocation( $nldt ){
         $nln = JGB_VWDS_LOCATIONS_NONCE_KEY_NM.'-nonce';
         $nonce = $nldt[ $nln ];
 
         $res = [];
+        $res['err_status'] = 0;
 
         if( empty($nonce) ){
             $res['err_status']  = JGB_VWDS_LOCATIONS_UPSERT_ERR_NONCE;
             $res['err_msg']     = 'Sesión inválida';
-            return new WP_REST_Response( $res );
+            return $res;
         }
 
         if( !isset( $nldt['code'] ) || empty( $nldt['code'] ) ){
             $res['err_status']  = JGB_VWDS_LOCATIONS_UPSERT_ERR_CTT_EMPTY;
             $res['err_msg']     = 'Código vacío';
-            return new WP_REST_Response( $res );
+            return $res;
         }
 
         if( !isset( $nldt['type'] )  || empty( $nldt['type'] ) ){
             $res['err_status']  = JGB_VWDS_LOCATIONS_UPSERT_ERR_CTT_EMPTY;
             $res['err_msg']     = 'Tipo vacío';
-            return new WP_REST_Response( $res );
+            return $res;
         }
 
         if( !isset( $nldt['title'] ) || empty( $nldt['title'] ) ){
             $res['err_status']  = JGB_VWDS_LOCATIONS_UPSERT_ERR_CTT_EMPTY;
             $res['err_msg']     = 'Título vacío';
-            return new WP_REST_Response( $res );
+            return $res;
         }
 
         if( !empty( $nldt['parent'] ) ){
+            global $wpdb;
             $ssql  = "SELECT COUNT(*) AS coincidencias ";
             $ssql .= "FROM wp_wc_vwds_locations ";
             $ssql .= "WHERE `location_code` = '" . $nldt['parent'] . "'";
@@ -49,47 +50,102 @@ class JGBVWDSLocations{
             if( $coincidencias < 1 ){
                 $res['err_status']  = JGB_VWDS_LOCATIONS_UPSERT_ERR_NVLDPRNT;
                 $res['err_msg']     = 'No existe superior';
-                return new WP_REST_Response( $res );
+                return $res;
             }
         }
 
+        return $res;
+    }
+
+    public function storedLocationMatchByLocationCode( $lc ){
+        global $wpdb;
         $ssql  = "SELECT COUNT(*) AS coincidencias ";
         $ssql .= "FROM wp_wc_vwds_locations ";
-        $ssql .= "WHERE `location_code` = '" . $nldt['code'] . "'";
+        $ssql .= "WHERE `location_code` = '" . $lc . "'";
         $ssql .= "  AND `deleted` = 0";
 
         $coincidencias = intval( $wpdb->get_results($ssql)[0]->coincidencias );
-        if( $coincidencias < 1 ){
-            $isql  = "INSERT INTO wp_wc_vwds_locations ( ";
-            $isql .= "  location_code,";
-            $isql .= "  `desc`,";
-            $isql .= "  `parent`,";
-            $isql .= "  `type`";
-            $isql .= ") ";
-            $isql .= "VALUES (";
-            $isql .= "  '". $nldt['code'] ."',";
-            $isql .= "  '". $nldt['title'] ."',";
-            $isql .= "  '". $nldt['parent'] ."',";
-            $isql .= "  '". $nldt['type'] ."'";
-            $isql .= ")";
 
-            $res['sql_oprtn']  = 'insert';
-            $res['sql_result'] = $wpdb->query($isql);
+        return $coincidencias < 1 ? false : true;
+    }
+
+    public function insertNewLocation( $nldt ){
+        global $wpdb;
+
+        $isql  = "INSERT INTO wp_wc_vwds_locations ( ";
+        $isql .= "  location_code,";
+        $isql .= "  `desc`,";
+        $isql .= "  `parent`,";
+        $isql .= "  `type`";
+        $isql .= ") ";
+        $isql .= "VALUES (";
+        $isql .= "  '". $nldt['code'] ."',";
+        $isql .= "  '". $nldt['title'] ."',";
+        $isql .= "  '". $nldt['parent'] ."',";
+        $isql .= "  '". $nldt['type'] ."'";
+        $isql .= ")";
+
+        $res['sql_oprtn']  = 'insert';
+        $res['sql_result'] = $wpdb->query($isql);
+
+        if( $wpdb->last_result ){
+            $res['err_status'] = 0;
         } else {
-            $usql  = "UPDATE wp_wc_vwds_locations ";
-            $usql .= "SET ";
-            $usql .= "  `desc` = '" . $nldt['title'] ."',";
-            $usql .= "  `parent` = '" . $nldt['parent'] ."',";
-            $usql .= "  `type` = '" . $nldt['type'] ."' ";
-            $usql .= "WHERE `location_code` = '" . $nldt['code'] ."'";
-            
-            $res['sql_oprtn']  = 'update';
-            $res['sql_result'] = $wpdb->query($usql);
+            $res['err_status'] = JGB_VWDS_LOCATIONS_UPSERT_ERR_SQL;
+            $res['err_msg'] = $wpdb->last_error;
+        }
+        return $res;
+    }
+
+    public function updateLocation( $nldt ){
+        global $wpdb;
+
+        $usql  = "UPDATE wp_wc_vwds_locations ";
+        $usql .= "SET ";
+        $usql .= is_null( $nldt['updId'] ) ? '' : "  `location_code = '" . $nldt['updId'] . "',";
+        $usql .= "  `desc` = '" . $nldt['title'] ."',";
+        $usql .= "  `parent` = '" . $nldt['parent'] ."',";
+        $usql .= "  `type` = '" . $nldt['type'] ."' ";
+        $usql .= "WHERE ";
+        if( is_null( $nldt['updId'] ) ){
+            $usql .= "`location_code` = '" . $nldt['code'] ."'";
+        } else {
+            $usql .= "`id` = '" . $nldt['updId'] ."'";
         }
 
-        $res['err_status']  = 0;
+        $res['sql_oprtn']  = 'update';
+        $res['sql_result'] = $wpdb->query($usql);
+
+        if( $wpdb->last_result ){
+            $res['err_status'] = 0;
+        } else {
+            $res['err_status'] = JGB_VWDS_LOCATIONS_UPSERT_ERR_SQL;
+            $res['err_msg'] = $wpdb->last_error;
+        }
+        return $res;
+    }
+
+    public function receiveNewLocation( WP_REST_Request $r ){
+
+        $nldt = $r->get_json_params();
+        
+        $res = [];
+        $res = $this->validateNewLocation( $nldt );
+        if( $res['err_status'] != 0 )
+            return new WP_REST_Response( $res );
+        
+        if( $this->storedLocationMatchByLocationCode(  $nldt['code'] ) ){
+            $res = $this->insertNewLocation( $nldt );
+            
+        } else {
+            $res = $this->updateLocation( $nldt );
+            
+        }
+
         $response = new WP_REST_Response( $res );
+
         return $response;
+        
     }
 
     public function removeLocations( WP_REST_Request $r ){
