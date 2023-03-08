@@ -95,20 +95,26 @@ class JGBVWDSLocations{
         global $wpdb;
         $locations_ids_to_remove = $r->get_json_params();
         
-        $i = 0;
-        foreach( $locations_ids_to_remove as $idtr){
-            $ir = $wpdb->update(
-                'wp_wc_vwds_locations',
-                ['deleted' => 1],
-                ['id' => $idtr]
-            );
-            if( $ir ){
-                $i++;
+        try{
+            $i = 0;
+            foreach( $locations_ids_to_remove as $idtr){
+                $ir = $wpdb->update(
+                    'wp_wc_vwds_locations',
+                    ['deleted' => 1],
+                    ['id' => $idtr]
+                );
+                if( $ir ){
+                    $i++;
+                }
             }
+            $res = [
+                'err_status'   => 0,
+                'deleted_rows' => $i
+            ];
+        } catch ( Exception $e ){
+            $res['err_status'] = 1;
+            $res['err_msg'] = $e->getMessage();
         }
-        $res = [
-            'deleted_rows' => $i
-        ];
 
         $response = new WP_REST_Response( $res );
         return $response;
