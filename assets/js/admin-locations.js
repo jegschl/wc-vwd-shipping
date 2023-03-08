@@ -65,9 +65,11 @@
     }
 
     function prepareEditLocation(){
-        let elms, tv;
+        let tv;
         
         locationIdToUpdate = parseInt( $(this).closest('tr').attr('id') );
+        tv = JGB_VWDS.lfMsgModMode.replace('%i',locationIdToUpdate);
+        $('#new-location-form > .title').text( tv );
 
         tv = $(this).closest('tr').children('td')[1].innerText;
         $('#location-code').val( tv );
@@ -165,6 +167,7 @@
         $('#location-type').val('');
         $('#location-title').val('');
         $('#location-parent').val('');
+        $('#new-location-form > .title').text( JGB_VWDS.lfMsgAddMode );
     }
 
     function reset_form_add_new_result(){

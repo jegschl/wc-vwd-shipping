@@ -114,7 +114,9 @@ class JGBVWDSAdminManager {
             $script_data = [
                 'urlGetLocations' => $this->restAPIer->get_endpoint_base('locations'),
                 'urlDelLocations' => $this->restAPIer->get_endpoint_base('remove-location'),
-                'actionsHtml'     => $actsHtml
+                'actionsHtml'     => $actsHtml,
+                'lfMsgAddMode'    => 'Agregar una nueva locación',
+                'lfMsgModMode'    => 'Modificar locación con id %i'
             ];
 
             $script_fl  = '/js/admin-locations.js';

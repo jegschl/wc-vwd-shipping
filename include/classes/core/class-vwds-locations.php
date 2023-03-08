@@ -88,7 +88,7 @@ class JGBVWDSLocations{
         $res['sql_oprtn']  = 'insert';
         $res['sql_result'] = $wpdb->query($isql);
 
-        if( $wpdb->last_result ){
+        if( ($res['sql_result'] !== false) && ($res['sql_result'] > 0) ){
             $res['err_status'] = 0;
         } else {
             $res['err_status'] = JGB_VWDS_LOCATIONS_UPSERT_ERR_SQL;
@@ -102,7 +102,7 @@ class JGBVWDSLocations{
 
         $usql  = "UPDATE wp_wc_vwds_locations ";
         $usql .= "SET ";
-        $usql .= is_null( $nldt['updId'] ) ? '' : "  `location_code = '" . $nldt['updId'] . "',";
+        $usql .= is_null( $nldt['updId'] ) ? '' : "  `location_code` = '" . $nldt['code'] . "',";
         $usql .= "  `desc` = '" . $nldt['title'] ."',";
         $usql .= "  `parent` = '" . $nldt['parent'] ."',";
         $usql .= "  `type` = '" . $nldt['type'] ."' ";
@@ -116,7 +116,7 @@ class JGBVWDSLocations{
         $res['sql_oprtn']  = 'update';
         $res['sql_result'] = $wpdb->query($usql);
 
-        if( $wpdb->last_result ){
+        if( ($res['sql_result'] !== false) && ($res['sql_result'] >= 0) ){
             $res['err_status'] = 0;
         } else {
             $res['err_status'] = JGB_VWDS_LOCATIONS_UPSERT_ERR_SQL;
@@ -134,7 +134,7 @@ class JGBVWDSLocations{
         if( $res['err_status'] != 0 )
             return new WP_REST_Response( $res );
         
-        if( $this->storedLocationMatchByLocationCode(  $nldt['code'] ) ){
+        if( !$this->storedLocationMatchByLocationCode(  $nldt['code'] ) && is_null( $nldt['updId'] ) ){
             $res = $this->insertNewLocation( $nldt );
             
         } else {
