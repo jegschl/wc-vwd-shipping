@@ -6,6 +6,7 @@
     let isFormSaving;
     let remConfirmDlg;
     let locationToRemove;
+    let locationIdToUpdate;
 
     const btn_save = '#new-location-form .buttons .button.save';
     const img_spinner = '#new-location-form .buttons .uploading img';
@@ -59,8 +60,28 @@
         }
     }
 
-    function prepareEditLocation(){
+    function onDttblCreatedRow( row, data, dataIndex, cells ){
+        $(row).data('parent-location-code',data['DT_RowData']['parent-location-code']);
+    }
 
+    function prepareEditLocation(){
+        let elms, tv;
+        
+        locationIdToUpdate = parseInt( $(this).closest('tr').attr('id') );
+
+        tv = $(this).closest('tr').children('td')[1].innerText;
+        $('#location-code').val( tv );
+
+        tv = $(this).closest('tr').children('td')[2].innerText;
+        $('#location-type').val( tv );
+        
+        tv = $(this).closest('tr').children('td')[3].innerText;
+        $('#location-title').val( tv );
+
+        tv = $(this).closest('tr').data('parent-location-code');
+        $('#location-parent').val( tv );
+
+        validate_form_fields();
     }
 
     function onDttblDraw(){
@@ -174,6 +195,7 @@
 
     function prepare_data_to_send(){
         const locationData = {
+            'updId': locationIdToUpdate,
             'code': $('#location-code').val(),
             'type': $('#location-type').val(),
             'title': $('#location-title').val(),
@@ -232,6 +254,7 @@
                         //reload datatable
                         dttbl.ajax.reload();
                         reset_form_add_new_fields();
+                        locationIdToUpdate = null;
                     } else {
                         set_form_add_new_result_error();
                     }
@@ -251,6 +274,8 @@
     $(document).ready(function () {
         $('#add_row').click(add_new_row);
         
+        locationIdToUpdate = null;
+
         dttbl = $('#jgb-vwds-location-list #locations-table').DataTable( {
             processing: true,
             serverSide: true,
@@ -283,7 +308,8 @@
                     render: actions_data_render
                 }
             ],
-            drawCallback: onDttblDraw
+            drawCallback: onDttblDraw,
+            createdRow: onDttblCreatedRow
         } );
 
         $('#location-code').change(inputChange);

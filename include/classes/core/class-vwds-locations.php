@@ -124,14 +124,24 @@ class JGBVWDSLocations{
     public function sendLocations(){
         global $wpdb;
 
-        $select  = "SELECT * FROM wp_wc_vwds_locations ";
+        $select  = "SELECT 
+                        locts.id, 
+                        locts.location_code,
+                        locts.type,
+                        locts.desc,
+                        prnt.desc as parent,
+                        locts.parent as plc,
+                        locts.active
+                    FROM wp_wc_vwds_locations locts ";
+
+        $join = "LEFT JOIN wp_wc_vwds_locations prnt ON locts.parent = prnt.location_code ";
 
         $select_prepare_count = "SELECT SQL_CALC_FOUND_ROWS * FROM wp_wc_vwds_locations ";
         
         $select_get_count = "SELECT FOUND_ROWS() AS total_rcds";
 
         //$where = "WHERE code NOT IN (\"". JGB_VWDS_NOZONES_AN_CODE ."\") ";
-        $where = "WHERE `deleted` = 0 ";
+        $where = "WHERE locts.`deleted` = 0 ";
         if(isset($_GET['search']) && !empty($_GET['search']) && !empty($_GET['search']['value'])){
             $sv = $_GET['search']['value'];
             $where  .= "AND `desc` LIKE '%$sv%' ";
@@ -147,7 +157,7 @@ class JGBVWDSLocations{
 
         $isql_scount = $select_prepare_count . $where;
         $isql_gcount = $select_get_count;
-        $isql        = $select . $where . $orderby . $limit;
+        $isql        = $select . $join . $where . $orderby . $limit;
 
         $wpdb->get_results( $isql_scount );
 
@@ -156,9 +166,13 @@ class JGBVWDSLocations{
         $locations = $wpdb->get_results( $isql );
 
         $locations_raw = [];
+        $row_data = [];
         foreach( $locations as $l ){
+            $row_data [ 'parent-location-code' ] = $l->plc;
+
             $locations_raw[] = [
                 'DT_RowId'         => $l->id,
+                'DT_RowData'       => $row_data,
                 'selection'        => '',
                 'location_code'    => $l->location_code,
                 'type'             => $l->type,
