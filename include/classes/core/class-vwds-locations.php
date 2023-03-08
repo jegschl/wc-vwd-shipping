@@ -87,6 +87,7 @@ class JGBVWDSLocations{
             $res['sql_result'] = $wpdb->query($usql);
         }
 
+        $res['err_status']  = 0;
         $response = new WP_REST_Response( $res );
         return $response;
     }
@@ -158,11 +159,13 @@ class JGBVWDSLocations{
         foreach( $locations as $l ){
             $locations_raw[] = [
                 'DT_RowId'         => $l->id,
+                'selection'        => '',
                 'location_code'    => $l->location_code,
                 'type'             => $l->type,
                 'title'            => $l->desc,
                 'parent'           => $l->parent,
-                'active'           => $l->active == 0 ? 'No' : 'Si'   
+                'active'           => $l->active == 0 ? 'No' : 'Si',
+                'actions'          => ''
             ];
         }
 
