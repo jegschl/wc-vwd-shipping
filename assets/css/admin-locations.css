@@ -4,7 +4,11 @@
 	border-radius: 25px;
 }
 
-.container.buttons {
+#new-location-form .container.fields {
+	margin-bottom: 15px;
+}
+
+#new-location-form .container.buttons {
 	display: flex;
 	align-items: center;
 }
@@ -25,4 +29,19 @@
 
 #locations-table .actions .action {
 	cursor: pointer ;
+}
+
+#jgb-vwds-location-list {
+	display: flex;
+}
+
+#jgb-vwds-location-list > div {
+	border: 1px solid darkgray;
+	padding: 15px;
+	border-radius: 7px;
+	flex: 0 1 auto;
+}
+
+#new-location-form {
+	margin-right: 10px;
 }

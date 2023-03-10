@@ -148,6 +148,13 @@ class JGBVWDSAdminManager {
                 array(),
                 $tversion
             );
+
+            wp_enqueue_style(
+                'jgb_vwds-datatable-css',
+                'https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css',
+                array()
+            );
+
         }
     }
 
