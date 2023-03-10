@@ -192,7 +192,7 @@ class JGBVWDSLocations{
 
         $join = "LEFT JOIN wp_wc_vwds_locations prnt ON locts.parent = prnt.location_code ";
 
-        $select_prepare_count = "SELECT SQL_CALC_FOUND_ROWS * FROM wp_wc_vwds_locations ";
+        $select_prepare_count = "SELECT SQL_CALC_FOUND_ROWS * FROM wp_wc_vwds_locations locts ";
         
         $select_get_count = "SELECT FOUND_ROWS() AS total_rcds";
 
@@ -243,7 +243,7 @@ class JGBVWDSLocations{
 
         $res['draw']            = $_GET['draw'];
         $res['recordsTotal']    = $rec_count;
-        $res['recordsFiltered'] = count( $locations_raw );
+        $res['recordsFiltered'] = $rec_count; //count( $locations_raw );
         $res['data']            = $locations_raw;
 
         $response = new WP_REST_Response( $res );
