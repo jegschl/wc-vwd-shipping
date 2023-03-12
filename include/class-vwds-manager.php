@@ -3,8 +3,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 
-define('JGB_VWDS_NOZONES_AN_CODE','zones-weights-disabled');
-define('JGB_VWDS_NOZONES_AN_DESC','Zones Weights disabled');
 define('JGB_VWDS_LOCATIONS_NONCE_KEY_NM','vwds-locations');
 define('JGB_VWDS_LOCATIONS_NONCE_ACT_NM','vwds-locations-action');
 define('JGB_VWDS_LOCATIONS_UPSERT_ERR_CTT_EMPTY',1);

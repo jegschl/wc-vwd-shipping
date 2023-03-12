@@ -52,18 +52,6 @@ class JGBVWDSDbInitializator{
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
         $wpdb->query( $isql );
         
-        $isql = " SELECT COUNT(*) AS zone_count FROM `wp_wc_vwds_zones`;";
-        $zc = $wpdb->get_results( $isql,  )[0]->zone_count;
-        if(  $zc < 1 ){
-          $isql  = "INSERT INTO `wp_wc_vwds_zones` (id,code,`desc`) ";
-          $isql .= "VALUES (";
-          $isql .= "0,";
-          $isql .= "'". JGB_VWDS_NOZONES_AN_CODE ."',";
-          $isql .= "'". JGB_VWDS_NOZONES_AN_DESC ."'";
-          $isql .= ")";
-          $wpdb->query( $isql );
-        }
-        
         
         write_log("Salida de inicialización de tablas de wp_wc_vwd_shipping...");
         write_log( ob_get_clean() );
