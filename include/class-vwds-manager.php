@@ -242,11 +242,13 @@ class JGBVWDS_Manager{
 
 		$this->locations = new JGBVWDSLocations;
 
-        $this->restApi = new JGBVWDSRestApi( $this->locations );
+		$this->cfManager = new JGBVWDSCfgManager;
+
+        $this->restApi = new JGBVWDSRestApi( $this->locations, $this->cfManager );
 
         $this->dbInitzr = new JGBVWDSDbInitializator;
 
-		$this->cfManager = new JGBVWDSCfgManager;
+		
 
 		$cfg = [
 			'assetsPath'		=> $this->path('ASSETS_DIR'),
