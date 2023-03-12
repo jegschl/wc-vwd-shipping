@@ -3,6 +3,51 @@
 
     let dttblZones = null;
 
+    function selection_data_render(data, type) {
+        if (type === 'display') {
+            let selection = '';
+            if(data == true){
+                selection = 'checked';
+            }
+
+            return '<input type="checkbox" ' + selection + ' />' ;
+        }
+         
+        return data;
+    }
+
+    function actions_data_render(data, type){
+		if (type === 'display') {
+			
+            return JGB_VWDS.actionsHtml ;
+        }
+         
+        return data;
+	}
+
+    function onDttblCreatedRow( row, data, dataIndex, cells ){
+        $(row).data('parent-location-code',data['DT_RowData']['parent-location-code']);
+    }
+
+    function confirmRemoveZones(){
+
+    }
+
+    function prepareEditZone(){
+
+    }
+
+    function onDttblDraw(){
+        const itemActionReqRemoveZones = '#zones-table .actions .action.remove';
+        $(itemActionReqRemoveZones).off('click');
+        $(itemActionReqRemoveZones).on('click', confirmRemoveZones);
+    
+        const itemActionReqEditZone = '#zones-table .actions .action.edit';
+        $(itemActionReqEditZone).off('click');
+        $(itemActionReqEditZone).on('click', prepareEditZone);
+    
+    }
+
     $(document).ready(function () {
 
         let zonesCols = [];
@@ -43,6 +88,14 @@
             drawCallback: onDttblDraw,
             createdRow: onDttblCreatedRow
         } );
+
+        $('#price-mode-selection .item-option input').click(function(){
+            
+            const modePrice = $('#price-mode-selection .item-option input:radio:checked').val();
+            const dt = {
+                'nm': 
+            }
+        });
 
     });
 

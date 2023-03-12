@@ -110,6 +110,51 @@ class JGBVWDSAdminManager {
         include $path;
     }
 
+    public function enqueue_js_zones(){
+        if( $this->is_admin_setting_zones() ){
+            $script_fl = 'https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js';
+            wp_enqueue_script(
+                'jgb_vwds_jquery_datatable', 
+                $script_fl,
+                array('jquery'),
+                null,
+                false
+            );
+
+            wp_deregister_script('jquery-ui');
+            wp_register_script('jquery-ui', 'https://code.jquery.com/ui/1.13.2/jquery-ui.js');
+
+            ob_start();
+            $this->locations_list_actions_html_render();
+            $actsHtml = ob_get_clean();
+            $script_data = [
+                'urlGetZones'     => $this->restAPIer->get_endpoint_base('zones'),
+                'urlDelZones'     => $this->restAPIer->get_endpoint_base('remove-location'),
+                'urlSetOpts'      => $this->restAPIer->get_endpoint_base('option'),
+                'actionsHtml'     => $actsHtml,
+                'zfMsgAddMode'    => 'Agregar una nueva Zona',
+                'zfMsgModMode'    => 'Modificar Zona con id %i',
+                'priceMode'       => $this->config->get_option(JGB_VWDS_OPTION_NAME_MODE_PRICE)
+            ];
+
+            $script_fl  = '/js/admin-zones.js';
+            $tversion = filemtime($this->assetsPath . $script_fl);
+            $script_url = $this->assetsUrlPrfx . $script_fl;
+            wp_enqueue_script(
+                'jgb_vwds-admin-zones-js',
+                $script_url,
+                [
+                    'jquery',
+                    'jquery-ui'
+                ],
+                $tversion,
+                false
+            );
+
+            wp_localize_script('jgb_vwds-admin-zones-js','JGB_VWDS',$script_data);
+        }
+    }
+
     public function enqueue_js_locations(){
         if( $this->is_admin_setting_locations() ){
             $script_fl = 'https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js';
@@ -186,6 +231,24 @@ class JGBVWDSAdminManager {
         }
 
         if( isset( $_GET['tab'] ) && $_GET['tab'] != 'locations' ){
+            return false;
+        }
+
+        return true;
+    }
+
+    public function is_admin_setting_zones(){
+        // page=jgb-vwds-settings&tab=locations
+
+        if( !isset( $_GET['page']) ){
+            return false;
+        }
+
+        if( $_GET['page'] != 'jgb-vwds-settings' ){
+            return false;
+        }
+
+        if( isset( $_GET['tab'] ) && $_GET['tab'] != 'zones' ){
             return false;
         }
 
