@@ -11,8 +11,11 @@ class JGBVWDSRestApi{
 
     private $locations;
 
-    function __construct(JGBVWDSLocations $locations){
+    private $config;
+
+    function __construct(JGBVWDSLocations $locations, JGBVWDSCfgManager $config){
         $this->locations = $locations;
+        $this->config = $config;
     }
 
     public function set_endpoints(){
@@ -63,6 +66,15 @@ class JGBVWDSRestApi{
             )
         );
 
+        register_rest_route(
+            'wc-vwd-sipping/',
+            '/option/',
+            array(
+                'methods'  => 'POST',
+                'callback' => [$this->config,'receiveOptSetReq'],
+                'permission_callback' => '__return_true',
+            )
+        );
 
     }
 
@@ -80,6 +92,10 @@ class JGBVWDSRestApi{
             
             case 'comunas':
                 return rest_url('/wc-vwd-sipping/comunas-por-region/');
+                break;
+
+            case 'option':
+                return rest_url('/wc-vwd-sipping/option/');
                 break;
 
         }

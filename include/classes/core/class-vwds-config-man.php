@@ -40,6 +40,24 @@ class JGBVWDSCfgManager{
     }
 
     public function set_option( $opt_nm, $opt_vl ){
+        $config = get_option(JGB_VWDS_OPTION_NAME);
+        $config[ $opt_nm ] = $opt_vl;
+        return update_option( JGB_VWDS_OPTION_NAME, $config );
+    }
 
+    public function receiveOptSetReq( WP_REST_Request $r ){
+        $o = $r->get_json_params();
+        $res = [];
+        $res['opt_update_result'] = $this->set_option($o['nm'],$o['vl']);
+
+        if( $res['opt_update_result'] !== false){
+            $res['err_status'] = 0;
+        } else {
+            $res['err_status'] = 1;
+        }
+
+        $response = new WP_REST_Response($res);
+
+        return $response;
     }
 }
