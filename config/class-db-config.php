@@ -25,17 +25,21 @@ class JGBVWDSDbInitializator{
 
         $isql = " CREATE TABLE IF NOT EXISTS `wp_wc_vwds_rules` (
                     `id` int unsigned NOT NULL AUTO_INCREMENT,
+                    `mode` enum('OU','WU','WR') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'OU: Solo unitario, sin multiplicar el peso de cada producto, no importa que el producto no tenga peso. WU: Se multiplicará el peso del producto por el precio. WR: Se multiplicará el peso por el precio según el rango de peso.',
                     `min_weight` float NOT NULL,
                     `max_weight` float NOT NULL,
                     `unit_price` float NOT NULL,
                     `min_price` float DEFAULT NULL,
-                    `zone_code` varchar(6) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+                    `destination_zone_code` varchar(6) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+                    `origin_zone_code` varchar(6) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT 'En versiones posteriores se utilizará para señalar el orignen',
                     `deleted` tinyint(1) NOT NULL DEFAULT '0',
                     `active` tinyint(1) NOT NULL DEFAULT '1',
                     UNIQUE KEY `wp_wc_vwds_rules_id_IDX` (`id`) USING BTREE,
                     KEY `wp_wc_vwds_rules_min_weight_IDX` (`min_weight`) USING BTREE,
                     KEY `wp_wc_vwds_rules_max_weight_IDX` (`max_weight`) USING BTREE,
-                    KEY `wp_wc_vwds_rules_zone_code_IDX` (`zone_code`) USING BTREE
+                    KEY `wp_wc_vwds_rules_dzc_IDX` (`destination_zone_code`) USING BTREE,
+                    KEY `wp_wc_vwds_rules_ozc_IDX` (`origin_zone_code`) USING BTREE,
+                    KEY `wp_wc_vwds_rules_mode_IDX` (`mode`) USING BTREE
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;";
         $wpdb->query( $isql );
 
