@@ -42,6 +42,8 @@ class JGBVWDS_Manager{
 
 	private $locations;
 
+	private $cfManager;
+
     /**
 	 * Constructor loads API functions, defines paths and adds required wp actions
 	 *
@@ -215,8 +217,10 @@ class JGBVWDS_Manager{
         require_once $this->path( 'CORE_DIR', 'class-vwds-checkout-flds.php' );
         require_once $this->path( 'CORE_DIR', 'class-vwds-rest-api.php' );
 		require_once $this->path( 'CORE_DIR', 'class-vwds-locations.php' );
+		require_once $this->path( 'CORE_DIR', 'class-vwds-config-man.php' );
         require_once $this->path( 'CONFIG_DIR', 'class-db-config.php' );
 		require_once $this->path( 'ADMIN', 'class-admin-manager.php' );
+		
 
 		/* la clase de wc_vwds_Shipping_Method hay que cargarla después
 		 * de que inicialice el sistema de envíos de WC. */
@@ -237,10 +241,13 @@ class JGBVWDS_Manager{
 
         $this->dbInitzr = new JGBVWDSDbInitializator;
 
+		$this->cfManager = new JGBVWDSCfgManager;
+
 		$cfg = [
 			'assetsPath'		=> $this->path('ASSETS_DIR'),
 			'assetsUrlPrfx'		=> JGB_VWDS_PLUGIN_URL . '/assets',
-			'restAPIer'			=> $this->restApi
+			'restAPIer'			=> $this->restApi,
+			'Config'			=> $this->cfManager
 		];
 		
 		$this->adminMan = new JGBVWDSAdminManager ($cfg);
