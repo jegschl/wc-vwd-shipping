@@ -165,8 +165,11 @@ class JGBVWDS_Manager{
 		add_action('admin_enqueue_scripts',[$this->adminMan,'enqueue_css_locations']);
 		add_action( 'JGB/VWDS/sections_locations', [$this->adminMan,'locations_list_html_render']);
 		add_action( 'JGB/VWDS/admin_settings_locations_before_datatable', [$this->adminMan,'locations_form_add_new_html_render']);
-		//add_action( 'JGB/VWDS/admin_settings_locations_after_datatable', [$this->adminMan,'locations_form_add_new_html_render']);
-    }
+    
+		add_action('admin_enqueue_scripts',[$this->adminMan,'enqueue_js_zones']);
+		add_action('admin_enqueue_scripts',[$this->adminMan,'enqueue_css_zones']);
+		add_action( 'JGB/VWDS/sections_zones', [$this->adminMan,'zones_adm_html_render']);
+	}
 
     private function public_hooks(){
         // Agrega el ,método de envío de este plugin.
@@ -247,7 +250,7 @@ class JGBVWDS_Manager{
 			'assetsPath'		=> $this->path('ASSETS_DIR'),
 			'assetsUrlPrfx'		=> JGB_VWDS_PLUGIN_URL . '/assets',
 			'restAPIer'			=> $this->restApi,
-			'Config'			=> $this->cfManager
+			'config'			=> $this->cfManager
 		];
 		
 		$this->adminMan = new JGBVWDSAdminManager ($cfg);

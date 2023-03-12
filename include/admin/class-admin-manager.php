@@ -13,12 +13,16 @@ class JGBVWDSAdminManager {
 
     private $img_path_spinner;
 
+    private $config;
+
     function __construct($config){
         $this->assetsPath       = isset( $config['assetsPath'] ) ? $config['assetsPath'] : plugins_url(__FILE__) . '/assets';
         $this->assetsUrlPrfx    = isset( $config['assetsUrlPrfx'] ) ? $config['assetsUrlPrfx'] : plugins_url(__FILE__) . '/assets';
         
         $this->restAPIer        = $config['restAPIer'];
         $this->img_path_spinner = $this->get_img_path_spinner();
+
+        $this->config           = $config[ 'config' ];
     }
 
     public function get_img_path_spinner(){
@@ -56,22 +60,27 @@ class JGBVWDSAdminManager {
     public function get_registered_tabs(){
         $tabs = array();
         
+        $tabs['zones'] = [
+            'slug'  => 'zones',
+            'label' => 'Zonas y tarifas'
+        ];
+
         $tabs['locations'] = [
             'slug'  => 'locations',
             'label' => 'Locaciones'
         ];
 
-        $tabs['zones'] = [
-            'slug'  => 'zones',
-            'label' => 'Zonas'
-        ];
-
-        $tabs['prices'] = [
+        $tabs['settings'] = [
             'slug'  => 'prices',
-            'label' => 'Tarifas'
+            'label' => 'Ajustes'
         ];
 
         return apply_filters('JGB/VWDS/admin_settings_tabs',$tabs);
+    }
+
+    public function zones_adm_html_render(){
+        $path = __DIR__ . '/views/html-adm-settings-zones.php';
+        include $path;
     }
 
     public function locations_list_html_render(){
