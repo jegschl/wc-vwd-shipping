@@ -93,8 +93,30 @@
             
             const modePrice = $('#price-mode-selection .item-option input:radio:checked').val();
             const dt = {
-                'nm': 
+                'nm': 'mode_price',
+                'vl': modePrice
             }
+
+            const ajxcfg = {
+                url: JGB_VWDS.urlSetOpts,
+                contentType: "application/json; charset=UTF-8",
+                data: JSON.stringify(dt),
+                method: 'POST',
+                error: function(  jqXHR,  textStatus,  errorThrown){
+                    console.log('No se pudo actrualizar la opción.');
+                },
+                success: function( data,  textStatus,  jqXHR){
+                
+                    if( data.err_status != undefined && data.err_status == 0){
+                        location.reload();
+                    } else {
+                        console.log('No se pudo actrualizar la opción.');
+                    }
+                    
+                }
+            }
+
+            $.ajax(ajxcfg);
         });
 
     });
