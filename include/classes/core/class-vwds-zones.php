@@ -7,8 +7,9 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 class JGBVWDSZones{
-    public function sendZones(){
+    public function get_zones($params){
         global $wpdb;
+        $res = [];
 
         $select  = "SELECT 
                         id,
@@ -17,24 +18,15 @@ class JGBVWDSZones{
                         active
                     FROM wp_wc_vwds_zones zones ";
 
+        $where = $this->get_where_clausule($params);
+
         $join = "LEFT JOIN wp_wc_vwds_locations prnt ON locts.parent = prnt.location_code ";
 
         $select_prepare_count = "SELECT SQL_CALC_FOUND_ROWS * FROM wp_wc_vwds_zones zones ";
         
         $select_get_count = "SELECT FOUND_ROWS() AS total_rcds";
 
-        //$where = "WHERE code NOT IN (\"". JGB_VWDS_NOZONES_AN_CODE ."\") ";
-        $where = "WHERE zones.`deleted` = 0 ";
-        if(isset($_GET['search']) && !empty($_GET['search']) && !empty($_GET['search']['value'])){
-            $sv = $_GET['search']['value'];
-            $where  .= "AND `desc` LIKE '%$sv%' ";
-        }
-
-        if(isset($_GET['length']) && $_GET['length']>0)
-            $limit = ' LIMIT ' . $_GET['start'] . ',' . $_GET['length'];
-        else 
-            $limit = ' LIMIT 10';
-
+        $limit = $this->get_sql_limit_clausule($params);
 
         $orderby = "ORDER BY `desc` ASC ";
 
@@ -48,8 +40,36 @@ class JGBVWDSZones{
 
         $zones = $wpdb->get_results( $isql );
 
+        $res[0] = $zones;
+        $res[1] = $rec_count;
+
+        return $res;
+    }
+
+    public function get_where_clausule($params){
+        $where = "WHERE zones.`deleted` = 0 ";
+        if(isset($params['search']) && !empty($params['search']) && !empty($params['search']['value'])){
+            $sv = $params['search']['value'];
+            $where  .= "AND `desc` LIKE '%$sv%' ";
+        }
+
+        return $where;
+    }
+
+    public function get_sql_limit_clausule($params){
+        if(isset($params['length']) && $params['length']>0)
+            $limit = ' LIMIT ' . $params['start'] . ',' . $params['length'];
+        else 
+            $limit = ' LIMIT 10';
+        return $limit;
+    }
+
+    public function sendZones(){
+ 
+        [$zones, $rec_count] = $this->get_zones($_GET);
+
         $zones_raw = [];
-        $row_data = [];
+        //$row_data = [];
         foreach( $zones as $l ){
             //$row_data [ 'parent-zone-code' ] = $l->plc;
 
