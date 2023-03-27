@@ -64,7 +64,7 @@
             id="input-import-data" 
             wrap="off"
             style="resize:both; width: 100%" 
-            placeholder="Pegue aquí un set de datos copiados dede una hoja de cálculo..."
+            placeholder="Pegue aquí un set de datos copiados desde una hoja de cálculo..."
         ></textarea>
         
         
