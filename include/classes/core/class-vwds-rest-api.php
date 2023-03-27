@@ -93,6 +93,16 @@ class JGBVWDSRestApi{
             )
         );
 
+        ///wc-vwd-sipping/zones-by-wr/
+        register_rest_route(
+            'wc-vwd-sipping/',
+            '/zones-by-wr/',
+            array(
+                'methods'  => 'POST',
+                'callback' => [$this->zones,'receiveZonesByWR'],
+                'permission_callback' => '__return_true',
+            )
+        );
     }
 
     
@@ -117,6 +127,9 @@ class JGBVWDSRestApi{
 
             case 'get-zones':
                 return rest_url('/wc-vwd-sipping/zones/');
+
+            case 'set-zones-by-wr':
+                return rest_url('/wc-vwd-sipping/zones-by-wr/');
 
         }
 

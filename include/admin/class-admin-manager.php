@@ -138,6 +138,7 @@ class JGBVWDSAdminManager {
                 'urlDelZones'     => $this->restAPIer->get_endpoint_base('remove-location'),
                 'urlGetZones'     => $this->restAPIer->get_endpoint_base('get-zones'),
                 'urlSetOpts'      => $this->restAPIer->get_endpoint_base('option'),
+                'urlSetZoneByWR'  => $this->restAPIer->get_endpoint_base('set-zones-by-wr'),
                 'actionsHtml'     => $actsHtml,
                 'zfMsgAddMode'    => 'Agregar una nueva Zona',
                 'zfMsgModMode'    => 'Modificar Zona con id %i',
@@ -175,7 +176,18 @@ class JGBVWDSAdminManager {
                     $tversion,
                     false
                 );
-                
+
+                $script_fl  = '/js/math-11.7.0/math.js';
+                $tversion = filemtime($this->assetsPath . $script_fl);
+                $script_url = $this->assetsUrlPrfx . $script_fl;
+                wp_enqueue_script(
+                    'jgb_vwds-math-js',
+                    $script_url,
+                    [],
+                    $tversion,
+                    false
+                );
+
             }
         }
     }
