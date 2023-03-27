@@ -30,7 +30,12 @@
                     <label for="crm-frz-fcw">Primera columna: Rangos de pesos / Primera Fila: Nombres de zonas</label>
                 </div>
                 <div class="radiobuttons-group-item">
-                    <input type="radio" name="rbg-col-row-mode" value="1" id="crm-frw-fcz">
+                    <input 
+                        type="radio" 
+                        name="rbg-col-row-mode" 
+                        value="1" 
+                        id="crm-frw-fcz"
+                    >
                     <label for="crm-frw-fcz">Primera columna: Nombres de zonas / Primera Fila: Rangos de pesos</label>
                 </div>
             </div>
