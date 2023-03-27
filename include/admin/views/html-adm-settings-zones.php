@@ -39,4 +39,5 @@
             </tr>
         </tfoot>
     </table>
+    <?php do_action('JGB/VWDS/admin_settings_zones_after_datatable'); ?>
 </section>
