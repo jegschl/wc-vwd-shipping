@@ -44,6 +44,8 @@ class JGBVWDS_Manager{
 
 	private $cfManager;
 
+	private $zones;
+
     /**
 	 * Constructor loads API functions, defines paths and adds required wp actions
 	 *
@@ -222,6 +224,7 @@ class JGBVWDS_Manager{
         require_once $this->path( 'CORE_DIR', 'class-vwds-checkout-flds.php' );
         require_once $this->path( 'CORE_DIR', 'class-vwds-rest-api.php' );
 		require_once $this->path( 'CORE_DIR', 'class-vwds-locations.php' );
+		require_once $this->path( 'CORE_DIR', 'class-vwds-zones.php' );
 		require_once $this->path( 'CORE_DIR', 'class-vwds-config-man.php' );
         require_once $this->path( 'CONFIG_DIR', 'class-db-config.php' );
 		require_once $this->path( 'ADMIN', 'class-admin-manager.php' );
@@ -244,7 +247,13 @@ class JGBVWDS_Manager{
 
 		$this->cfManager = new JGBVWDSCfgManager;
 
-        $this->restApi = new JGBVWDSRestApi( $this->locations, $this->cfManager );
+		$this->zones = new JGBVWDSZones;
+
+        $this->restApi = new JGBVWDSRestApi( 
+			$this->locations, 
+			$this->cfManager,
+			$this->zones
+		);
 
         $this->dbInitzr = new JGBVWDSDbInitializator;
 

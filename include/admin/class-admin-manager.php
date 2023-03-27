@@ -130,6 +130,7 @@ class JGBVWDSAdminManager {
             $script_data = [
                 'urlGetZones'     => $this->restAPIer->get_endpoint_base('zones'),
                 'urlDelZones'     => $this->restAPIer->get_endpoint_base('remove-location'),
+                'urlGetZones'     => $this->restAPIer->get_endpoint_base('get-zones'),
                 'urlSetOpts'      => $this->restAPIer->get_endpoint_base('option'),
                 'actionsHtml'     => $actsHtml,
                 'zfMsgAddMode'    => 'Agregar una nueva Zona',
