@@ -84,7 +84,7 @@ class JGBVWDSAdminManager {
         include $path;
     }
 
-    public function zones_pice_mode_html_render(){
+    public function zones_price_mode_html_render(){
         $mode_price = $this->config->get_option(JGB_VWDS_OPTION_NAME_MODE_PRICE);
         $path = __DIR__ . '/views/html-adm-zones-price-mode-selection.php';
         include $path;
