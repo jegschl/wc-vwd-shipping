@@ -8,6 +8,19 @@ if ( ! defined( 'WPINC' ) ) {
 
 class JGBVWDSLocations{
 
+    static function get_regiones(){
+        global $wpdb;
+        $qry = 'SELECT * FROM wp_wc_vwds_locations WHERE type = "region" ORDER BY "desc"';
+        $regiones = $wpdb->get_results($qry, OBJECT);
+        $vl = array();
+        foreach($regiones as $rg){
+            $key = $rg->location_code;
+            //$vl[$key] = array('id'=>$key,'name' => $rg->desc);
+            $vl[$key] = $rg->desc;
+        }
+        return $vl;
+    }
+
     public function validateNewLocation( $nldt ){
         $nln = JGB_VWDS_LOCATIONS_NONCE_KEY_NM.'-nonce';
         $nonce = $nldt[ $nln ];

@@ -10,7 +10,7 @@ class JGBVWDSCheckoutFields{
     public function configure_checkout_city_field($ckfs){
     
 
-        $regiones = get_regiones();
+        $regiones = JGBVWDSLocations::get_regiones();
     
         $ckfs['billing']['billing_vwds_region']['type'] = 'select';
         $ckfs['billing']['billing_vwds_region']['label'] = 'Región';

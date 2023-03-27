@@ -31,7 +31,7 @@ class JGBVWDSRestApi{
             '/comunas-por-region/(?P<region_id>\d+)',
             array(
                 'methods'  => 'GET',
-                'callback' => 'getComunasByRegion',
+                'callback' => [$this,'getComunasByRegion'],
                 'permission_callback' => '__return_true',
                 'args' => array(
                     'region_id' => array(
@@ -103,6 +103,7 @@ class JGBVWDSRestApi{
                 'permission_callback' => '__return_true',
             )
         );
+
     }
 
     
@@ -141,7 +142,7 @@ class JGBVWDSRestApi{
     public function getComunasByRegion( $request ){
         $region_id = $request->get_param( 'region_id' );
         if( isset($region_id) ){
-            $comunas_dpa = get_comunas_by_region(intval($region_id));
+            $comunas_dpa = $this->get_comunas_by_region(intval($region_id));
             function cmp($a, $b) {
                 return strcmp($a['name'], $b['name']);
             }

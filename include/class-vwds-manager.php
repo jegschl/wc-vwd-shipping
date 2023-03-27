@@ -187,7 +187,7 @@ class JGBVWDS_Manager{
             'woocommerce_checkout_fields',
             array(
                 $this->checkoutFlds,
-                'emp_configure_checkout_city_field'
+                'configure_checkout_city_field'
             )
         );
 
