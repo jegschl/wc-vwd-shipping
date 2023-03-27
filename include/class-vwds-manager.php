@@ -172,7 +172,7 @@ class JGBVWDS_Manager{
 		add_action('admin_enqueue_scripts',[$this->adminMan,'enqueue_css_zones']);
 		add_action( 'JGB/VWDS/sections_zones', [$this->adminMan,'zones_adm_html_render']);
 		add_action( 'JGB/VWDS/admin_settings_zones_before_datatable', [$this->adminMan,'zones_price_mode_html_render']);
-
+		add_action( 'JGB/VWDS/admin_settings_zones_after_datatable', [$this->adminMan,'zones_price_importer_html_render']);
 	}
 
     private function public_hooks(){

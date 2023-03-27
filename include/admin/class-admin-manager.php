@@ -90,6 +90,12 @@ class JGBVWDSAdminManager {
         include $path;
     }
 
+    public function zones_price_importer_html_render(){
+        $mode_price = $this->config->get_option(JGB_VWDS_OPTION_NAME_MODE_PRICE);
+        $path = __DIR__ . '/views/html-adm-zones-price-importer.php';
+        include $path;
+    }
+
     public function locations_list_html_render(){
 
         $path = __DIR__ . '/views/html-adm-locations-list.php';
