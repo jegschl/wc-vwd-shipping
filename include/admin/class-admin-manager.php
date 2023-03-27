@@ -159,6 +159,24 @@ class JGBVWDSAdminManager {
             );
 
             wp_localize_script('jgb_vwds-admin-zones-js','JGB_VWDS',$script_data);
+
+            if( $this->config->get_option(JGB_VWDS_OPTION_NAME_MODE_PRICE) == 'WR'){
+                
+                $script_fl  = '/js/admin-zones-importer.js';
+                $tversion = filemtime($this->assetsPath . $script_fl);
+                $script_url = $this->assetsUrlPrfx . $script_fl;
+                wp_enqueue_script(
+                    'jgb_vwds-admin-zones-importer-js',
+                    $script_url,
+                    [
+                        'jquery',
+                        'jquery-ui'
+                    ],
+                    $tversion,
+                    false
+                );
+                
+            }
         }
     }
 
