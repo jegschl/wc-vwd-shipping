@@ -7,6 +7,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 class JGBVWDSZones{
+    private $price_mode;
     public function get_zones($params){
         global $wpdb;
         $res = [];
@@ -94,5 +95,158 @@ class JGBVWDSZones{
 
         return $response;
 
+    }
+
+    private function resetZoneTable(){
+        global $wpdb;
+
+        $isql = "TRUNCATE TABLE wp_wc_vwds_zones";
+
+        $wpdb->query( $isql );
+
+        $isql = "ALTER TABLE wp_wc_vwds_zones AUTO_INCREMENT=1";
+
+        $wpdb->query( $isql );
+    }
+
+    private function resetRulesTable(){
+        global $wpdb;
+
+        $isql = "TRUNCATE TABLE wp_wc_vwds_rules";
+
+        $wpdb->query( $isql );
+
+        $isql = "ALTER TABLE wp_wc_vwds_rules AUTO_INCREMENT=1";
+
+        $wpdb->query( $isql );
+    }
+
+    public function receiveZonesByWR( WP_REST_Request $r ){
+        $dt = $r->get_json_params();
+
+        $this->resetZoneTable();
+
+        $this->resetRulesTable();
+
+        $zir = $this->insertZones( $dt['zones'] );
+        
+        $rir = $this->insertRules( $zir, $dt['weight'],$dt['prices'] );
+
+        $response = new WP_REST_Response( $rir );
+        $response->set_status( 200 );
+        
+        return $response;
+    }
+
+    private function insertRules( $zonesInfo, $weights, $prices ){
+        $rir = [];
+        $i = 0;
+        foreach( $zonesInfo as $zk => $zi ){
+            $j = 0;
+            foreach($weights as $w ){
+                $ri = [
+                    'mode'                  => $this->price_mode,
+                    'min_weight'            => $w[0],
+                    'max_weight'            => $w[1],
+                    'unit_price'            => $prices[$j][$i],
+                    'min_price'             => $prices[$j][$i],
+                    'destination_zone_code' => $zi['code']
+                ];
+                $tr = $this->insertRule( $ri );
+                if($tr['insert_err']){
+                    $tr['zone_desc'] = $zk;
+                    $tr['zone_code'] = $zi['code'];
+                    $tr['weight_range'] = $w;
+                }
+                $rir[] = $tr;
+                $j++;
+            }
+            $i++;
+        }
+
+        return $rir;
+    }
+
+    private function insertRule($ruleInfo){
+        global $wpdb;
+       
+        $ir = $wpdb->insert(
+            'wp_wc_vwds_rules',
+            $ruleInfo
+        );
+
+        if( $ir !== false ){
+            $result = [
+                'insert_err' => false,
+                'rule_id' => $wpdb->insert_id
+            ];
+        } else {
+            $result = [
+                'insert_err' => true,
+                'insert_err_msg' => $wpdb->last_error
+            ];
+        }
+
+        return $result;
+    }
+
+    private function insertZones( $zones ){
+
+        $zones_inserted = [];
+
+        foreach( $zones as $z ){
+
+            $zones_inserted[$z] = $this->insertZone( $z );
+            
+        }
+
+        return $zones_inserted;
+    }
+
+    private function insertZone( $zone ){
+        global $wpdb;
+        $zone_code = $this->generate_code( $zone );
+        $ir = $wpdb->insert(
+            'wp_wc_vwds_zones',
+            [
+                'code' => $zone_code,
+                'desc' => $zone
+            ]
+        );
+
+        if( $ir !== false ){
+            $result = [
+                'insert_err' => false,
+                'zone_id' => $wpdb->insert_id,
+                'code'    => $zone_code
+            ];
+        } else {
+            $result = [
+                'insert_err' => true,
+                'insert_err_msg' => $wpdb->last_error
+            ];
+        }
+
+        return $result;
+    }
+
+    public function  generate_code( $zone ){
+        
+        $zdis = explode(' ',$zone);
+        $zone_code = '';
+
+        foreach($zdis as $zdi){
+            $zone_code .= substr($zdi,0,1);
+        }
+         
+        $zone_code = apply_filters('JGB/VWDS/zones/generate_code',$zone_code,$zone);
+
+        return $zone_code;
+
+        
+    }
+
+    public function set_price_mode( $mode ){
+        $this->price_mode = $mode;
     }
 }

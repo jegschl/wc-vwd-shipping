@@ -150,11 +150,11 @@
         }
 
         get_zones_by_wr(){
-            return data = {
+            return {
                 zones: this.#zones,
                 weight: this.#weights,
                 prices: this.#prices
-            }
+            };
         }
     }
 
@@ -195,6 +195,8 @@
                     
                 }
             }
+
+            $.ajax(ajxCfg);
         } );
 
     });

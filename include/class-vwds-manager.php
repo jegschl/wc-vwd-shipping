@@ -248,6 +248,7 @@ class JGBVWDS_Manager{
 		$this->cfManager = new JGBVWDSCfgManager;
 
 		$this->zones = new JGBVWDSZones;
+		$this->zones->set_price_mode($this->cfManager->get_option(JGB_VWDS_OPTION_NAME_MODE_PRICE));
 
         $this->restApi = new JGBVWDSRestApi( 
 			$this->locations, 
