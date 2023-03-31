@@ -167,8 +167,8 @@ if ( ! class_exists( 'wc_vwds_Shipping_Method' ) ) {
             $weight = apply_filters('wc_vwds_total_contents_weight_before_get_rule',$weight,$package['contents']);
             
             global $wpdb;
-            $locationTypeForCost = apply_filters('wc_vwds_location_type_for_cost','region');
-            $WCCheckoutFieldForLTFC = apply_filters('wc_vwds_location_type_wc_chk_field_map','state');
+            $locationTypeForCost = apply_filters('wc_vwds_location_type_for_cost','comuna');
+            $WCCheckoutFieldForLTFC = apply_filters('wc_vwds_location_type_wc_chk_field_map','billing_vwds_comuna');
             /* $destination_location = explode('-',$package["destination"][$WCCheckoutFieldForLTFC])[0];
             $destination_base_zone = explode('-',$package["destination"][$WCCheckoutFieldForLTFC])[1]; */
             $post_data = array();
@@ -203,7 +203,7 @@ if ( ! class_exists( 'wc_vwds_Shipping_Method' ) ) {
                 $zone_code,
                 $weight
             );
-            $qry = 'SELECT * FROM wp_wc_vwds_rules WHERE zone_code="%s" AND (%f BETWEEN min_weight AND max_weight)';
+            $qry = 'SELECT * FROM wp_wc_vwds_rules WHERE destination_zone_code="%s" AND (%f BETWEEN min_weight AND max_weight)';
             $inst_sql = $wpdb->prepare($qry,$values);
             //$rule_match = $wpdb->get_row($wpdb->prepare($qry,$values), OBJECT);
             $rule_match = $wpdb->get_row($inst_sql, OBJECT);
