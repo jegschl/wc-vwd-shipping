@@ -287,8 +287,35 @@ class JGBVWDSLocations{
         else 
             $limit = ' LIMIT 10';
 
+        $order_field = 'locts.desc';
+        $dir = 'ASC';
+        if( isset( $_GET['order'] ) && isset( $_GET['order'][0] ) && isset($_GET['order'][0]['column']) ){
+            switch( $_GET['order'][0]['column'] ){
+                case 1:
+                    $order_field = 'locts.location_code';
+                    break;
 
-        $orderby = "ORDER BY `desc` ASC ";
+                case 2:
+                    $order_field = 'locts.type';
+                    break;
+
+                case 3:
+                    $order_field = 'locts.desc';
+                    break;
+
+                case 4:
+                    $order_field = 'prnt.desc';
+                    break;
+
+                case 5:
+                    $order_field = 'locts.active';
+                    break;
+            }
+            $dir = strtoupper( $_GET['order'][0]['dir'] );
+        }        
+
+        
+        $orderby = "ORDER BY $order_field $dir ";
 
         $isql_scount = $select_prepare_count . $where;
         $isql_gcount = $select_get_count;
