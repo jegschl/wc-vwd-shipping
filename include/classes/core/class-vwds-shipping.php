@@ -172,7 +172,12 @@ if ( ! class_exists( 'wc_vwds_Shipping_Method' ) ) {
             /* $destination_location = explode('-',$package["destination"][$WCCheckoutFieldForLTFC])[0];
             $destination_base_zone = explode('-',$package["destination"][$WCCheckoutFieldForLTFC])[1]; */
             $post_data = array();
-            parse_str( $_POST['post_data'] ,$post_data );
+            if( $this->is_shipping_calculation_req_from_checkout() ){
+                $post_data = $_POST ;
+            } else {
+                parse_str( $_POST['post_data'] ,$post_data );
+            }
+            
             /*write_log('========= datos en $post_data =========');
             write_log($post_data);*/
             if( isset($post_data[$WCCheckoutFieldForLTFC]) && !empty($post_data[$WCCheckoutFieldForLTFC]) ){
@@ -257,13 +262,22 @@ if ( ! class_exists( 'wc_vwds_Shipping_Method' ) ) {
                             $location_match,
                             $zone_match
                         );
-             write_log('Datos de shipping rate:');
+            write_log('Datos de shipping rate:');
             write_log($rate);
             if($rate['cost']>0){
                 $this->add_rate( $rate );
             }
+           
             
             $wc_vwds['rule_match'] = $rule_match;
+        }
+
+        public function is_shipping_calculation_req_from_checkout(){
+            $cs = debug_backtrace();
+            if( $cs[12]['function'] == 'process_checkout' && $cs[12]['class'] == 'WC_Checkout'){
+                return true;
+            }
+            return false;
         }
 
         public static function add_wc_vwds_shipping_method( $methods ) {
