@@ -54,6 +54,7 @@
 
         zonesCols.push({
             data: null,
+            orderable: false,
             render: selection_data_render
         });
 
@@ -73,6 +74,7 @@
 
         zonesCols.push({
             data: null,
+            orderable: false,
             render: actions_data_render
         });
 
