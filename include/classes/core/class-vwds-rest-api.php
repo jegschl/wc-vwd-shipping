@@ -65,6 +65,16 @@ class JGBVWDSRestApi{
 
         register_rest_route(
             'wc-vwd-sipping/',
+            '/locations-import/',
+            array(
+                'methods'  => 'POST',
+                'callback' => [$this->locations,'receiveNewLocationsForImport'],
+                'permission_callback' => '__return_true',
+            )
+        );
+
+        register_rest_route(
+            'wc-vwd-sipping/',
             '/rem-locations/',
             array(
                 'methods'  => 'POST',
@@ -117,6 +127,9 @@ class JGBVWDSRestApi{
             case 'locations':
                 return rest_url('/wc-vwd-sipping/locations/');
                 break;
+
+            case 'locations-import':
+                return rest_url('/wc-vwd-sipping/locations-import/');
             
             case 'comunas':
                 return rest_url('/wc-vwd-sipping/comunas-por-region/');
@@ -132,6 +145,7 @@ class JGBVWDSRestApi{
             case 'set-zones-by-wr':
                 return rest_url('/wc-vwd-sipping/zones-by-wr/');
 
+            
         }
 
         return null;

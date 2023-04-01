@@ -161,6 +161,17 @@ class JGBVWDSLocations{
         
     }
 
+    public function receiveNewLocationsForImport( WP_REST_Request $r ){
+
+        $nlsdt = $r->get_json_params();
+
+        $res = [];
+
+        $response = new WP_REST_Response( $res );
+
+        return $response;
+    }
+
     public function removeLocations( WP_REST_Request $r ){
         global $wpdb;
         $locations_ids_to_remove = $r->get_json_params();
