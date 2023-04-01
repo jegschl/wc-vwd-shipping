@@ -161,11 +161,66 @@ class JGBVWDSLocations{
         
     }
 
+    public function truncateLocationsTable(){
+        global $wpdb;
+        $wpdb->query("TRUNCATE TABLE wp_wc_vwds_locations");
+        $wpdb->query("ALTER TABLE wp_wc_vwds_locations AUTO_INCREMENT = 1");
+    }
+
     public function receiveNewLocationsForImport( WP_REST_Request $r ){
 
-        $nlsdt = $r->get_json_params();
+        $nlsdt = $r->get_json_params(); //New Locations Data
 
         $res = [];
+
+        $res['err_status'] = 0;
+        $res['updates_ok_count'] = 0;
+        $res['updates_fail_count'] = 0;
+        $res['dtls'] = [];
+        $ir = [];
+
+        if( isset($nlsdt['truncateLocations']) && $nlsdt['truncateLocations'] ){
+            $this->truncateLocationsTable();
+        }
+
+        if( isset($nlsdt['data']) && is_array($nlsdt['data']) && ( count($nlsdt['data']) > 0 )){
+            $nldt = [];
+            foreach( $nlsdt['data'] as $nlfi ){// NewLocationForImport
+                $nldt['code'] = $nlfi['location_code'];
+                $nldt['type'] = $nlfi['type'];
+                $nldt['title'] = $nlfi['desc'];
+                $nldt['parent'] = $nlfi['parent'];
+                $nldt['updId'] = null;
+                $nldt['vwds-locations-nonce'] = '';
+                $ir['nldt'] = $nldt;
+                $locMatch = $this->storedLocationMatchByLocationCode(  $nldt['code'] );
+                if( $nlsdt['updateExistentLocations'] && $locMatch ){
+                    $csor = $this->updateLocation( $nldt );
+                    if( $csor['err_status'] == 0 ){
+                        $res['updates_ok_count']++;
+                    } else {
+                        $res['updates_fail_count']++;
+                        $ir['err_status'] = $csor['err_status'];
+                        $ir['err_msg'] = $csor['err_msg'];
+                    }
+                } elseif(!$nlsdt['updateExistentLocations'] && $locMatch){
+                    $res['updates_fail_count']++;
+                } elseif(!$locMatch && !$nlsdt['createNewLocations'] ){
+                    $res['inserts_fail_count']++;
+                } elseif( !$locMatch && $nlsdt['createNewLocations'] ){
+                    $csor = $this->insertNewLocation( $nldt );
+                    if( $csor['err_status'] == 0 ){
+                        $res['inserts_ok_count']++;
+                    } else {
+                        $res['inserts_fail_count']++;
+                        $ir['err_status'] = $csor['err_status'];
+                        $ir['err_msg'] = $csor['err_msg'];
+                    }
+                }
+
+                $res['dtls'][$nldt['code']] = $ir;
+            }
+        }
 
         $response = new WP_REST_Response( $res );
 

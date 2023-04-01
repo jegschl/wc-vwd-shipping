@@ -117,6 +117,7 @@ class JGBVWDSAdminManager {
     }
 
     public function locations_importer_html_render(){
+        $img_path_spinner = $this->img_path_spinner;
         $path = __DIR__ . '/views/html-adm-locations-importer.php';
         include $path;
     }
