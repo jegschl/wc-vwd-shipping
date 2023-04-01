@@ -19,7 +19,7 @@
                 <div class="label"><label for="locations-data">Código</label></div>
                 <div class="input">
                     <textarea 
-                        id="locations-data" 
+                        id="input-locations-import-data"
                         placeholder="Aquí puede pegar el listado de locaciones copiadas desde una hoja de cálculo"
                         style="resize:both; width: 100%"
                     ></textarea>
