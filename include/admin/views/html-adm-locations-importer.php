@@ -16,6 +16,10 @@
         <div class="container fields">
             <input type="hidden" id="<?= JGB_VWDS_LOCATIONS_NONCE_KEY_NM ?>" value="<?= $nonce ?>">
             <div class="parameters">
+                <div class="field-set locations-truncate">
+                    <input type="checkbox" id="locations-truncate">
+                    <label for="locations-truncate">Eliminar todas las locaciones existentes y crear todo a partir de esta importación.</label>
+                </div>
                 <div class="field-set locations-create-new">
                     <input type="checkbox" id="locations-create-new">
                     <label for="locations-create-new">Crear nuevas locaciones de códigos inexistentes.</label>
@@ -23,10 +27,6 @@
                 <div class="field-set locations-update">
                     <input type="checkbox" id="locations-update">
                     <label for="locations-update">Actualiar locaciones de códigos existentes.</label>
-                </div>
-                <div class="field-set locations-truncate">
-                    <input type="checkbox" id="locations-truncate">
-                    <label for="locations-truncate">Eliminar todas las locaciones existentes y crear todo a partir de esta importación.</label>
                 </div>
             </div>
             <div class="field locations-data">
