@@ -9,7 +9,7 @@
     const IPRTR_WR_MODE_SUPLIM = 1;
     const IPRTR_WR_MODE_DOWSUP = 0;
 
-    class JGBVWDSImporter{
+    class JGBVWDSZonesImporter{
         #InElId;
         #input;
         #headersMode;
@@ -158,7 +158,7 @@
         }
     }
 
-    const ourIprtr = new JGBVWDSImporter( '#input-import-data' );
+    const ourIprtr = new JGBVWDSZonesImporter( '#input-import-data' );
 
     function read_params(){
         ourIprtr.setHeadersMode( parseInt( $('input[name="rbg-col-row-mode"]:checked').val() ) );
