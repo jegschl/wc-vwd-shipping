@@ -112,7 +112,7 @@ class JGBVWDSAdminManager {
 
     public function locations_list_actions_html_render(){
         $img_path_spinner = $this->img_path_spinner;
-        $path = __DIR__ . '/views/html-adm-locations-actions.php';
+        $path = __DIR__ . '/views/html-adm-locations-item-actions.php';
         include $path;
     }
 
