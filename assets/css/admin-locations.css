@@ -46,3 +46,8 @@
 #new-location-form {
 	
 }
+
+#locations-importer-form .container.buttons {
+	display: flex;
+	align-content: center;
+}
