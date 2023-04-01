@@ -215,11 +215,12 @@ class JGBVWDSAdminManager {
             $this->locations_list_actions_html_render();
             $actsHtml = ob_get_clean();
             $script_data = [
-                'urlGetLocations' => $this->restAPIer->get_endpoint_base('locations'),
-                'urlDelLocations' => $this->restAPIer->get_endpoint_base('remove-location'),
-                'actionsHtml'     => $actsHtml,
-                'lfMsgAddMode'    => 'Agregar una nueva locación',
-                'lfMsgModMode'    => 'Modificar locación con id %i'
+                'urlGetLocations'   => $this->restAPIer->get_endpoint_base('locations'),
+                'urlDelLocations'   => $this->restAPIer->get_endpoint_base('remove-location'),
+                'urlLocationsImprt' => $this->restAPIer->get_endpoint_base('locations-import'),
+                'actionsHtml'       => $actsHtml,
+                'lfMsgAddMode'      => 'Agregar una nueva locación',
+                'lfMsgModMode'      => 'Modificar locación con id %i'
             ];
 
             $script_fl  = '/js/admin-locations.js';
@@ -237,6 +238,19 @@ class JGBVWDSAdminManager {
             );
 
             wp_localize_script('jgb_vwds-admin-locations-js','JGB_VWDS',$script_data);
+
+            $script_fl  = '/js/admin-locations-importer.js';
+            $tversion = filemtime($this->assetsPath . $script_fl);
+            $script_url = $this->assetsUrlPrfx . $script_fl;
+            wp_enqueue_script(
+                'jgb_vwds-admin-locations-importer-js',
+                $script_url,
+                [
+                    'jquery'
+                ],
+                $tversion,
+                false
+            );
         }
     }
 
