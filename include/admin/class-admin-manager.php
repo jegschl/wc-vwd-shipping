@@ -116,6 +116,11 @@ class JGBVWDSAdminManager {
         include $path;
     }
 
+    public function locations_importer_html_render(){
+        $path = __DIR__ . '/views/html-adm-locations-importer.php';
+        include $path;
+    }
+
     public function enqueue_js_zones(){
         if( $this->is_admin_setting_zones() ){
             $script_fl = 'https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js';
