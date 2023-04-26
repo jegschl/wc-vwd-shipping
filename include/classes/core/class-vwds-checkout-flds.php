@@ -101,6 +101,8 @@ class JGBVWDSCheckoutFields{
                             console.log('===== Valor de #billing_city: ' + $('#billing_city').val());
                             $( document.body ).trigger( 'update_checkout' );
                         });
+
+                        $("#billing_vwds_region").trigger('change');
                         
                     });
     
