@@ -13,7 +13,7 @@ class JGBVWDSZones{
         $res = [];
 
         $select  = "SELECT 
-                        id,
+                        zones.id,
                         code,
                         `desc`,
                         active
@@ -144,10 +144,11 @@ class JGBVWDSZones{
         foreach( $zonesInfo as $zk => $zi ){
             $j = 0;
             foreach($weights as $w ){
+                [$mnw,$mxw] = explode('-',$w);
                 $ri = [
                     'mode'                  => $this->price_mode,
-                    'min_weight'            => $w[0],
-                    'max_weight'            => $w[1],
+                    'min_weight'            => $mnw,
+                    'max_weight'            => $mxw,
                     'unit_price'            => $prices[$j][$i],
                     'min_price'             => $prices[$j][$i],
                     'destination_zone_code' => $zi['code']
