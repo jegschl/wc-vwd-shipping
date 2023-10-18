@@ -150,10 +150,14 @@
         }
 
         get_zones_by_wr(){
+            const opts = {
+                ZoneCodesGenerationMode: parseInt( $('input[name="rbg-zncd-gen-mode"]:checked').val() )
+            };
             return {
                 zones: this.#zones,
                 weight: this.#weights,
-                prices: this.#prices
+                prices: this.#prices,
+                options: opts
             };
         }
     }
