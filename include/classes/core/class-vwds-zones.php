@@ -6,8 +6,20 @@ if ( ! defined( 'WPINC' ) ) {
  
 }
 
+define('JGB_VWDS_ZNCD_GEN_MODE_LOW_ZONE_COUNT',0);
+define('JGB_VWDS_ZNCD_GEN_MODE_SECUENTIAL',1);
 class JGBVWDSZones{
     private $price_mode;
+
+    private $last_generated_zone_code;
+
+    private $zone_code_generation_mode;
+
+    function __construct()
+    {
+        $this->zone_code_generation_mode = JGB_VWDS_ZNCD_GEN_MODE_LOW_ZONE_COUNT;
+    }
+
     public function get_zones($params){
         global $wpdb;
         $res = [];
@@ -236,11 +248,22 @@ class JGBVWDSZones{
         $zdis = explode(' ',$zone);
         $zone_code = '';
 
-        foreach($zdis as $zdi){
-            $zone_code .= substr($zdi,0,1);
+        if( $this->zone_code_generation_mode == JGB_VWDS_ZNCD_GEN_MODE_LOW_ZONE_COUNT ){
+            foreach($zdis as $zdi){
+                $zone_code .= substr($zdi,0,1);
+            }
         }
-         
+
+        if( ( $this->zone_code_generation_mode == JGB_VWDS_ZNCD_GEN_MODE_SECUENTIAL ) && !is_null($this->last_generated_zone_code)){
+            $last_sec = intval($this->last_generated_zone_code);
+            $zone_code = $last_sec++;
+        }
+
         $zone_code = apply_filters('JGB/VWDS/zones/generate_code',$zone_code,$zone);
+
+        if( $this->zone_code_generation_mode == JGB_VWDS_ZNCD_GEN_MODE_SECUENTIAL ){
+            $this->last_generated_zone_code = $zone_code;
+        }
 
         return $zone_code;
 
