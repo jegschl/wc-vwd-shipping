@@ -64,6 +64,32 @@
                 </div>
             </div>
         </div>
+
+        <div class="prm-field-set zncd-gen-mod">
+            <div class="title">Modo de generación de Códigos de Zona</div>
+            <div class="prm-field radiobuttons-group">
+                <div class="radiobuttons-group-item">
+                    <input 
+                        type="radio" 
+                        name="rbg-zncd-gen-mode" 
+                        value="0" 
+                        id="zncd-gn-mode-default"
+                        checked
+                    >
+                    <label for="zncd-gn-mode-default">Iniciales de la descripción de cada zona</label>
+                </div>
+                <div class="radiobuttons-group-item">
+                    <input 
+                        type="radio" 
+                        name="rbg-zncd-gen-mode" 
+                        value="1" 
+                        id="zncd-gn-mode-sec"
+                    >
+                    <label for="zncd-gn-mode-sec">Secuencial</label>
+                </div>
+            </div>
+        </div>
+
         <?php endif; ?>
         <textarea 
             id="input-import-data" 
