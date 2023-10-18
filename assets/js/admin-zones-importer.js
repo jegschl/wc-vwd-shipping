@@ -65,7 +65,7 @@
 
                 if( this.#headersMode == IPRTR_COL_ROW_MODE_FRW_FCZ ){
                     // se invierte la matriz this.#prices
-                    this.#prices = math.inv( this.#prices );
+                    this.#prices = math.transpose( this.#prices );
                 }
             }
         }
