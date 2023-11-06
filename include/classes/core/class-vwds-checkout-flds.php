@@ -60,7 +60,7 @@ class JGBVWDSCheckoutFields{
                         $("#billing_vwds_region").on("change", function(){
                             let region_id = $('#billing_vwds_region').val();
                             //region_id = region_id.split('-')[0];
-                            let region_nm = $('#billing_vwds_region  option:selected').text();
+                            let region_nm = $('#billing_vwds_region  option:selected').val();
                             $('#billing_state').val(region_nm);
                             console.log('===== Valor de #billing_state: ' + $('#billing_state').val());
     
@@ -103,6 +103,16 @@ class JGBVWDSCheckoutFields{
                         });
 
                         $("#billing_vwds_region").trigger('change');
+
+                        /* Retira select2 de campo de región de WC */
+                        setTimeout(function () {
+                            //$('#billing_state').hide();
+                            $('#billing_state').select2('destroy');
+                            $('#billing_state_field').hide();
+                            $('#billing_city_field').hide();
+                        }, 1500);
+
+                        
                         
                     });
     
