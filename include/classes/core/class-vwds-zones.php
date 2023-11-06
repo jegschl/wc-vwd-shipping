@@ -136,6 +136,8 @@ class JGBVWDSZones{
     public function receiveZonesByWR( WP_REST_Request $r ){
         $dt = $r->get_json_params();
 
+        $this->zone_code_generation_mode = $dt['options']['ZoneCodesGenerationMode'];
+
         $this->resetZoneTable();
 
         $this->resetRulesTable();
@@ -254,9 +256,13 @@ class JGBVWDSZones{
             }
         }
 
-        if( ( $this->zone_code_generation_mode == JGB_VWDS_ZNCD_GEN_MODE_SECUENTIAL ) && !is_null($this->last_generated_zone_code)){
-            $last_sec = intval($this->last_generated_zone_code);
-            $zone_code = $last_sec++;
+        if( $this->zone_code_generation_mode == JGB_VWDS_ZNCD_GEN_MODE_SECUENTIAL ) {
+            if( is_null($this->last_generated_zone_code) ){
+                $zone_code = 1;
+            } else {
+                $last_sec = intval($this->last_generated_zone_code);
+                $zone_code = $last_sec+1;
+            }
         }
 
         $zone_code = apply_filters('JGB/VWDS/zones/generate_code',$zone_code,$zone);
