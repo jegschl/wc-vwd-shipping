@@ -28,7 +28,7 @@ class JGBVWDSRestApi{
     public function set_endpoints(){
         register_rest_route(
             'wc-vwd-sipping/',
-            '/comunas-por-region/(?P<region_id>\d+)',
+            '/comunas-por-region/(?P<region_id>[^/]+)',
             array(
                 'methods'  => 'GET',
                 'callback' => [$this,'getComunasByRegion'],
@@ -36,7 +36,7 @@ class JGBVWDSRestApi{
                 'args' => array(
                     'region_id' => array(
                         'validate_callback' => function($param, $request, $key) {
-                            return is_numeric( $param );
+                            return !empty( $param );
                         }
                     ),
                 )
@@ -156,7 +156,7 @@ class JGBVWDSRestApi{
     public function getComunasByRegion( $request ){
         $region_id = $request->get_param( 'region_id' );
         if( isset($region_id) ){
-            $comunas_dpa = $this->get_comunas_by_region(intval($region_id));
+            $comunas_dpa = $this->get_comunas_by_region($region_id);
             function cmp($a, $b) {
                 return strcmp($a['name'], $b['name']);
             }
