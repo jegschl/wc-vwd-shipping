@@ -8,8 +8,10 @@ if ( ! defined( 'WPINC' ) ) {
 
 define('JGB_VWDS_ZNCD_GEN_MODE_LOW_ZONE_COUNT',0);
 define('JGB_VWDS_ZNCD_GEN_MODE_SECUENTIAL',1);
+define('JGB_VWDS_ZNCD_GEN_MODE_DESC',2);
 define('JGB_VWDS_WEIGHT_MOD_SUPERIOR_LIMIT',1);
 define('JGB_VWDS_WEIGHT_MOD_RANGE',0);
+
 class JGBVWDSZones{
     private $price_mode;
 
@@ -17,9 +19,13 @@ class JGBVWDSZones{
 
     private $zone_code_generation_mode;
 
+    private $weight_header_name_mode;
+
     function __construct()
     {
         $this->zone_code_generation_mode = JGB_VWDS_ZNCD_GEN_MODE_LOW_ZONE_COUNT;
+
+        $this->weight_header_name_mode   = JGB_VWDS_WEIGHT_MOD_SUPERIOR_LIMIT;
     }
 
     public function get_zones($params){
@@ -140,7 +146,7 @@ class JGBVWDSZones{
 
         $this->zone_code_generation_mode = $dt['options']['ZoneCodesGenerationMode'];
 
-        $weight_mode = isset( $dt['options']['WeightRangeMode'] )? $dt['options']['WeightRangeMode'] : null;
+        $this->weight_header_name_mode   = isset( $dt['options']['WeightRangeMode'] )? $dt['options']['WeightRangeMode'] : null;
 
         $this->resetZoneTable();
 
@@ -156,9 +162,10 @@ class JGBVWDSZones{
         return $response;
     }
 
-    private function insertRules( $zonesInfo, $weights, $prices, $weight_mode = JGB_VWDS_WEIGHT_MOD_SUPERIOR_LIMIT ){
+    private function insertRules( $zonesInfo, $weights, $prices ){
         $rir = [];
         $i = 0;
+        $weight_mode = $this->weight_header_name_mode;
         foreach( $zonesInfo as $zk => $zi ){
             $j = 0;
             foreach($weights as $w ){
@@ -167,10 +174,10 @@ class JGBVWDSZones{
                     if( $j == 0 ){
                         $mnw = 0;
                     } else {
-                        $mnw = $weights[ $j - 1 ] + 0.01;
+                        $mnw = $weights[ $j - 1 ] + 0.001;
                     }
                     $mxw = $w;
-                } else {
+                } else { 
                     [$mnw,$mxw] = explode('-',$w);
                 }
 
@@ -183,6 +190,7 @@ class JGBVWDSZones{
                     'destination_zone_code' => $zi['code']
                 ];
                 $tr = $this->insertRule( $ri );
+
                 if($tr['insert_err']){
                     $tr['zone_desc'] = $zk;
                     $tr['zone_code'] = $zi['code'];
@@ -278,6 +286,10 @@ class JGBVWDSZones{
                 $last_sec = intval($this->last_generated_zone_code);
                 $zone_code = $last_sec+1;
             }
+        }
+
+        if( $this->zone_code_generation_mode == JGB_VWDS_ZNCD_GEN_MODE_DESC ) {
+            $zone_code = $zone;
         }
 
         $zone_code = apply_filters('JGB/VWDS/zones/generate_code',$zone_code,$zone);

@@ -7,7 +7,6 @@
     const IPRTR_COL_ROW_MODE_FRZ_FCW = 0;
 
     const IPRTR_WR_MODE_SUPLIM = 1;
-    const IPRTR_WR_MODE_DOWSUP = 0;
 
     class JGBVWDSZonesImporter{
         #InElId;
@@ -172,6 +171,15 @@
     }
 
     $(document).ready(function () {
+
+        let htmlElementsParsingFirer = "input[name=\"rbg-col-row-mode\"]";
+        htmlElementsParsingFirer += ",input[name=\"rbg-weight-range-mode\"]";
+        
+        $(htmlElementsParsingFirer).click(function(){
+            read_params();
+            
+            ourIprtr.parse();
+        });
 
         $('#input-import-data').on('input propertychange paste',function(){
             read_params();

@@ -87,6 +87,15 @@
                     >
                     <label for="zncd-gn-mode-sec">Secuencial</label>
                 </div>
+                <div class="radiobuttons-group-item">
+                    <input 
+                        type="radio" 
+                        name="rbg-zncd-gen-mode" 
+                        value="2" 
+                        id="zncd-gn-mode-nmb"
+                    >
+                    <label for="zncd-gn-mode-nmb">Descripción de zona</label>
+                </div>
             </div>
         </div>
 
