@@ -8,6 +8,8 @@ if ( ! defined( 'WPINC' ) ) {
 
 define('JGB_VWDS_ZNCD_GEN_MODE_LOW_ZONE_COUNT',0);
 define('JGB_VWDS_ZNCD_GEN_MODE_SECUENTIAL',1);
+define('JGB_VWDS_WEIGHT_MOD_SUPERIOR_LIMIT',1);
+define('JGB_VWDS_WEIGHT_MOD_RANGE',0);
 class JGBVWDSZones{
     private $price_mode;
 
@@ -138,6 +140,8 @@ class JGBVWDSZones{
 
         $this->zone_code_generation_mode = $dt['options']['ZoneCodesGenerationMode'];
 
+        $weight_mode = isset( $dt['options']['WeightRangeMode'] )? $dt['options']['WeightRangeMode'] : null;
+
         $this->resetZoneTable();
 
         $this->resetRulesTable();
@@ -152,13 +156,24 @@ class JGBVWDSZones{
         return $response;
     }
 
-    private function insertRules( $zonesInfo, $weights, $prices ){
+    private function insertRules( $zonesInfo, $weights, $prices, $weight_mode = JGB_VWDS_WEIGHT_MOD_SUPERIOR_LIMIT ){
         $rir = [];
         $i = 0;
         foreach( $zonesInfo as $zk => $zi ){
             $j = 0;
             foreach($weights as $w ){
-                [$mnw,$mxw] = explode('-',$w);
+                
+                if( $weight_mode == JGB_VWDS_WEIGHT_MOD_SUPERIOR_LIMIT ){
+                    if( $j == 0 ){
+                        $mnw = 0;
+                    } else {
+                        $mnw = $weights[ $j - 1 ] + 0.01;
+                    }
+                    $mxw = $w;
+                } else {
+                    [$mnw,$mxw] = explode('-',$w);
+                }
+
                 $ri = [
                     'mode'                  => $this->price_mode,
                     'min_weight'            => $mnw,

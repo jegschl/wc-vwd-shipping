@@ -151,7 +151,8 @@
 
         get_zones_by_wr(){
             const opts = {
-                ZoneCodesGenerationMode: parseInt( $('input[name="rbg-zncd-gen-mode"]:checked').val() )
+                ZoneCodesGenerationMode: parseInt( $('input[name="rbg-zncd-gen-mode"]:checked').val() ),
+                WeightRangeMode: parseInt( $('input[name="rbg-weight-range-mode"]:checked').val() )
             };
             return {
                 zones: this.#zones,
