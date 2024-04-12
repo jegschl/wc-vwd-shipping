@@ -34,13 +34,40 @@ class JGBVWDSCheckoutFields{
         }
     }
 
+    private function get_default_vw_states_map(){
+        return [
+            'XV' => 'CL-AP',
+            'I' => 'CL-TA',
+            'II' => 'CL-AN',
+            'III' => 'CL-AT',
+            'IV' => 'CL-CO',
+            'V' => 'CL-VS',
+            'VI' => 'CL-LI',
+            'VII' => 'CL-ML',
+            'VIII' => 'CL-BI',
+            'IX' => 'CL-AR',
+            'XIV' => 'CL-LR',
+            'X' => 'CL-LL',
+            'XI' => 'CL-AI',
+            'XII' => 'CL-MA',
+            'RM' => 'CL-RM',
+            'XVI' => 'CL-NB'
+        ];
+    }
+
+    private function get_vwsm(){
+        $vwsDefaultMap = $this->get_default_vw_states_map();
+        return apply_filters('vwds_state_map', $vwsDefaultMap );
+    }
+
     public function add_js_locations(){
         if(is_checkout()){
-            
+            $vwsm = $this->get_vwsm();
             $reg_com_url = rest_url( '/wc-vwd-sipping/comunas-por-region/' );
             ?>
     
             <script>
+                const vwds_wc_states_map = <?= json_encode( $vwsm ) ?>;
                 (function( $ ) {
                     const reg_com_url = '<?= $reg_com_url ?>';
                     $(document).ready(function ($) {
@@ -61,6 +88,7 @@ class JGBVWDSCheckoutFields{
                             let region_id = $('#billing_vwds_region').val();
                             //region_id = region_id.split('-')[0];
                             let region_nm = $('#billing_vwds_region  option:selected').val();
+                            region_nm = vwds_wc_states_map[region_nm];
                             $('#billing_state').val(region_nm);
                             console.log('===== Valor de #billing_state: ' + $('#billing_state').val());
     
