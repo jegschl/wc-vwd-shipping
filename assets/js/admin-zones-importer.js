@@ -203,7 +203,7 @@
                     if( data.err_status != undefined && data.err_status == 0){
                         location.reload();
                     } else {
-                        console.log('No se pudieron actrualizar la zonas.');
+                        console.log('No se pudieron actualizar las zonas.');
                     }
                     
                 }
